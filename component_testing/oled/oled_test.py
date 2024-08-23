@@ -1,4 +1,4 @@
-from component_testing.oled.modules import text_areas as areas
+from component_testing.oled.modules.text_areas import text_areas as areas
 
 
 class OledTestTextAreas(object):
