@@ -1,3 +1,4 @@
+import os
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_ssd1306
 from board import SCL, SDA
@@ -28,7 +29,8 @@ class TextAreas:
         self.area2 = _TextArea(0, 16, 127, 33)
         self.area3 = _TextArea(0, 31, 127, 48)
         self.area4 = _TextArea(0, 46, 127, 63)
-        self.font = ImageFont.truetype("VCR_OSD_MONO_1.001.ttf", 15)
+        font_path = os.path.join(os.path.dirname(__file__), "VCR_OSD_MONO_1.001.ttf")
+        self.font = ImageFont.truetype(font_path, 15)
 
     def setup(self):
         self.disp.fill(0)
