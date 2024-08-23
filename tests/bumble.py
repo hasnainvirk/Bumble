@@ -44,7 +44,8 @@ def cli():
 def test(oled: bool, v: int):
     set_verbosity_level(v) if v else None
     if oled:
-        oled_test.test_text_areas()
+        test = oled_test()
+        test.test_text_areas()
         print(sys.path)
     pass
 
