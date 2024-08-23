@@ -20,8 +20,8 @@ class _TextArea(object):
 
 class TextAreas:
     def __init__(self) -> None:
-        self._i2c = busio.I2C(SCL, SDA)
-        self.disp = adafruit_ssd1306.SSD1306_I2C(WIDTH_PX, HEIGHT_PX, self._i2c)
+        self.i2c = busio.I2C(SCL, SDA)
+        self.disp = adafruit_ssd1306.SSD1306_I2C(WIDTH_PX, HEIGHT_PX, self.i2c)
         self.image = Image.new("1", (self.disp.width, self.disp.height))
         self.draw = ImageDraw.Draw(self.image)
         self.area1 = _TextArea(0, 0, 127, 15)

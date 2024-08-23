@@ -33,9 +33,17 @@ $ sudo apt install realvnc-vnc-server realvnc-vnc-viewer
 
 ```sh
 $ sudo raspi-config
+# select I3 VNC
 ```
 
-5. Setup virtual python environment
+5. Enable I2C on raspberry pi so that we can use I2C interface for our peripherals, e.g., the OLED module.
+
+```sh
+$ sudo raspi-config
+# selct I5 I2C
+```
+
+6. Setup virtual python environment
 
 ```sh
 $ sudo apt install virtualenvwrapper
