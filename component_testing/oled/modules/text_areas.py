@@ -18,7 +18,7 @@ class _TextArea(object):
         self.bottom = bottom
 
 
-class TextAreas(object):
+class TextAreas:
     def __init__(self) -> None:
         self._i2c = busio.I2C(SCL, SDA)
         self.disp = adafruit_ssd1306.SSD1306_I2C(WIDTH_PX, HEIGHT_PX, self._i2c)
