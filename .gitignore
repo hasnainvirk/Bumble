@@ -1,0 +1,6 @@
+*.pyc
+.project
+.cproject
+.vscode
+__pycache__
+bumble.egg-info/
