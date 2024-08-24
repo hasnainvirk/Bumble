@@ -55,16 +55,16 @@ def cli():
     help="Loads an emoji the OLED screen, e.g. $bumble oled --emoji happy",
 )
 @click.option(
-    "-states",
+    "-stats",
     is_flag=True,
     help="Loads usage states on the OLED screen",
 )
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
-def oled(text, image, emoji, states, v):
+def oled(text, image, emoji, stats, v):
     set_verbosity_level(v) if v else None
     log.info("Running OLED test")
     cmd = oled_test()
-    cmd_opts = test_cmd_options(text=text, image=image, emoji=emoji, states=states)
+    cmd_opts = test_cmd_options(text=text, image=image, emoji=emoji, stats=stats)
     cmd.execute_command(cmd_opts=cmd_opts)
 
 
