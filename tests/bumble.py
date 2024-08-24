@@ -15,6 +15,10 @@ from components.wheels.modules.wheel_iface import (
     LOWER_LEFT_WHEEL,
     LOWER_RIGHT_WHEEL,
 )
+from components.led_panel.led_panel_test import (
+    LedPanelTest as led_test,
+    led_cmd_options,
+)
 
 ## Setting up logger
 LOG_LEVEL = logging.ERROR  # default log level
@@ -133,6 +137,26 @@ def drive(forward, backward, left, right, v):
     cmd_opts = drive_system_cmd_options(
         forward=forward, backward=backward, left=left, right=right
     )
+    cmd.execute_command(cmd_opts=cmd_opts)
+
+
+@cli.command("led")
+@click.option(
+    "-smile",
+    is_flag=True,
+    help="Displays smiley face on the LED panel",
+)
+@click.option(
+    "-bob",
+    is_flag=True,
+    help="Displays bob face on the LED panel",
+)
+@click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
+def led(smile, bob, v):
+    set_verbosity_level(v) if v else None
+    log.info("Running LED Panel test")
+    cmd = led_test()
+    cmd_opts = led_cmd_options(smile=smile, bob=bob)
     cmd.execute_command(cmd_opts=cmd_opts)
 
 
