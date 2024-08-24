@@ -1,6 +1,13 @@
 import time
 from PIL import Image, ImageDraw
-from oled.modules.oled import Oled, HAPPY, SAD, ANGRY, WIDTH_PX, HEIGHT_PX
+from component_testing.oled.modules.oled import (
+    Oled,
+    HAPPY,
+    SAD,
+    ANGRY,
+    WIDTH_PX,
+    HEIGHT_PX,
+)
 
 
 class Emoji(Oled):
