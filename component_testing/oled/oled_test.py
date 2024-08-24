@@ -13,7 +13,7 @@ class OledTest(object):
         self.text = load_text.Text()
         self.image = load_image.Image()
         self.emoji = load_emoji.Emoji()
-        self.states = load_stats.Stats()
+        self.stats = load_stats.Stats()
 
     def execute_command(self, cmd_opts: test_cmd_options):
         if cmd_opts.get("text"):
@@ -38,4 +38,4 @@ class OledTest(object):
         self.emoji.load_emoji(ctype)
 
     def __test_stats_load(self):
-        self.states.load_stats()
+        self.stats.load_stats()

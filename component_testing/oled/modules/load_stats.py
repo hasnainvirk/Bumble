@@ -48,5 +48,5 @@ class Stats(Oled):
 
             # Display image.
             self.disp.image(image)
-            self.disp.display()
+            self.disp.show()
             time.sleep(0.5)
