@@ -1,5 +1,11 @@
-from oled.modules import text_areas, load_image, load_emoji
-from oled.modules.oled import AREA_1, AREA_2, AREA_3, AREA_4, test_cmd_options
+from component_testing.oled.modules import load_emoji, load_image, text_areas
+from component_testing.oled.modules.oled import (
+    AREA_1,
+    AREA_2,
+    AREA_3,
+    AREA_4,
+    test_cmd_options,
+)
 
 
 class OledTest(object):
