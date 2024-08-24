@@ -11,24 +11,18 @@ class Stats(Oled):
         super().__init__()
 
     def load_stats(self):
-
-        image = Image.new("1", (self.disp.width, self.disp.height))
-        # Get drawing object to draw on image.
-        draw = ImageDraw.Draw(image)
-
-        # Draw some shapes.
         # First define some constants to allow easy resizing of shapes.
         padding = -2
         top = padding
         bottom = self.disp.height - padding
         # Move left to right keeping track of the current x position for drawing shapes.
         x = 0
-        # Load default font.
-        font = ImageFont.load_default()
 
         while True:
             # Draw a black filled box to clear the image.
-            draw.rectangle((0, 0, self.disp.width, self.disp.height), outline=0, fill=0)
+            self.draw.rectangle(
+                (0, 0, self.disp.width, self.disp.height), outline=0, fill=0
+            )
 
             # Shell scripts for system monitoring from here : https://unix.stackexchange.com/questions/119126/command-to-display-memory-usage-disk-usage-and-cpu-load
             cmd = "hostname -I | cut -d' ' -f1"
@@ -41,12 +35,12 @@ class Stats(Oled):
             disk = subprocess.check_output(cmd, shell=True)
 
             # Write two lines of text.
-            draw.text((x, top), "IP: " + str(ip), font=font, fill=255)
-            draw.text((x, top + 8), str(cpu), font=font, fill=255)
-            draw.text((x, top + 16), str(mem_usage), font=font, fill=255)
-            draw.text((x, top + 25), str(disk), font=font, fill=255)
+            self.draw.text((x, top), "IP: " + str(ip), font=self.font, fill=255)
+            self.draw.text((x, top + 8), str(cpu), font=self.font, fill=255)
+            self.draw.text((x, top + 16), str(mem_usage), font=self.font, fill=255)
+            self.draw.text((x, top + 25), str(disk), font=self.font, fill=255)
 
             # Display image.
-            self.disp.image(image)
+            self.disp.image(self.image)
             self.disp.show()
             time.sleep(0.5)

@@ -58,18 +58,21 @@ class Oled:
         self.areas = [AREA_1, AREA_2, AREA_3, AREA_4]
         self.emojis = [HAPPY, SAD, ANGRY]
         self.wipe()
+        self.__inialize()
 
-    def create_text_areas(self):
+    def __inialize(self):
         self.image = Image.new("1", (self.disp.width, self.disp.height))
         self.draw = ImageDraw.Draw(self.image)
-        self.area1 = TextArea(0, 0, 127, 15)
-        self.area2 = TextArea(0, 16, 127, 33)
-        self.area3 = TextArea(0, 31, 127, 48)
-        self.area4 = TextArea(0, 46, 127, 63)
         font_path = os.path.join(
             os.path.dirname(__file__), RESOURCES_FOLDER, "VCR_OSD_MONO_1.001.ttf"
         )
         self.font = ImageFont.truetype(font_path, 15)
+
+    def create_text_areas(self):
+        self.area1 = TextArea(0, 0, 127, 15)
+        self.area2 = TextArea(0, 16, 127, 33)
+        self.area3 = TextArea(0, 31, 127, 48)
+        self.area4 = TextArea(0, 46, 127, 63)
 
     def get_area(self, area_number) -> TextArea | None:
         if area_number == AREA_1:
