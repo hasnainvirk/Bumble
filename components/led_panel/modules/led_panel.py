@@ -1,6 +1,8 @@
 import RPi.GPIO as GPIO
 import time
 
+GPIO.setwarnings(False)
+
 
 class LedPanel:
     def __init__(self):
@@ -32,7 +34,6 @@ class LedPanel:
         GPIO.cleanup()
 
     def __setup(self):
-        GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.__gpio_pins.get("SCLK"), GPIO.OUT)
         GPIO.setup(self.__gpio_pins.get("DIO"), GPIO.OUT)

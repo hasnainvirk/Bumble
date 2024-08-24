@@ -8,7 +8,7 @@ from components.led_panel.modules.shapes import (
 )
 from typing import TypedDict, Optional
 from components.led_panel.modules.led_panel import LedPanel
-import time
+import time, logging
 
 led_cmd_options = TypedDict(
     "led_cmd_options",
@@ -28,6 +28,7 @@ class LedPanelTest(object):
         self.__matrix_left = matrix_left
         self.__matrix_right = matrix_right
         self.__panel = LedPanel()
+        self.log = logging.getLogger("bumble")
 
     def execute_command(self, cmd_opts: led_cmd_options):
         try:
