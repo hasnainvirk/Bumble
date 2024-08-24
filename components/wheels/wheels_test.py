@@ -1,4 +1,5 @@
 import time
+from typing import TypedDict, Optional
 from components.wheels.modules.upper_left_wheel import UpperLeftWheel
 from components.wheels.modules.lower_left_wheel import LowerLeftWheel
 from components.wheels.modules.upper_right_wheel import UpperRightWheel
@@ -17,6 +18,14 @@ from components.wheels.modules.wheel_iface import (
     LOWER_RIGHT_WHEEL,
 )
 
+wheel_cmd_options = TypedDict(
+    "wheel_cmd_options",
+    {
+        "forward": Optional[str],
+        "backward": Optional[str],
+    },
+)
+
 
 class WheelsTest(object):
     def __init__(self):
@@ -33,34 +42,6 @@ class WheelsTest(object):
             self.__handle_wheel(cmd_opts.get("forward"), DIRECTION_FORWARD)
         elif cmd_opts.get("backward"):
             self.__handle_wheel(cmd_opts.get("backward"), DIRECTION_BACKWARD)
-        elif cmd_opts.get("stop"):
-            self.__handle_wheel(cmd_opts.get("stop"), DIRECTION_NONE)
-        elif cmd_opts.get("all"):
-            self.__four_wheel_drive(cmd_opts.get("all"))
-
-    def __four_wheel_drive(self, direction: str):
-        wheels = [
-            UPPER_LEFT_WHEEL,
-            LOWER_LEFT_WHEEL,
-            UPPER_RIGHT_WHEEL,
-            LOWER_RIGHT_WHEEL,
-        ]
-        while True:
-            time.sleep(0.01)
-            try:
-                for wheel in wheels:
-                    self.wheel = self.__ctrl.get(wheel)
-                    if direction == DIRECTION_FORWARD:
-                        self.wheel.move_forward()
-                    elif direction == DIRECTION_BACKWARD:
-                        self.wheel.move_backwards()
-                    else:
-                        break
-            except KeyboardInterrupt:
-                break
-
-        for self.wheel in self.__ctrl:
-            self.wheel.stop()
 
     def __handle_wheel(self, wheel_name: str, direction: str) -> wheel_status:
         self.wheel = self.__ctrl.get(wheel_name)

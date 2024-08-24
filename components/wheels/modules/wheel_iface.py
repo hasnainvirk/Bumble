@@ -1,5 +1,4 @@
 import abc
-
 from typing import TypedDict, Optional
 
 WHEEL_MOVING_FORWARD = 100
@@ -20,17 +19,6 @@ wheel_status = TypedDict(
         "name": str,
         "speed": int,
         "retcode": int,
-    },
-)
-
-
-wheel_cmd_options = TypedDict(
-    "wheel_cmd_options",
-    {
-        "forward": Optional[str],
-        "backward": Optional[str],
-        "stop": Optional[str],
-        "all": Optional[str],
     },
 )
 

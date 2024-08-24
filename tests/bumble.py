@@ -3,18 +3,18 @@ import sys
 import click
 from colorlog import ColoredFormatter
 from components.oled.oled_test import OledTest as oled_test
-from components.wheels.wheels_test import WheelsTest as wheel_test
+from components.wheels.wheels_test import WheelsTest as wheel_test, wheel_cmd_options
+from components.drive_system.drive_system_test import (
+    DriveSystemTest as drive_test,
+    drive_system_cmd_options,
+)
 from components.oled.modules.oled import test_cmd_options
 from components.wheels.modules.wheel_iface import (
-    wheel_cmd_options,
     UPPER_LEFT_WHEEL,
     UPPER_RIGHT_WHEEL,
     LOWER_LEFT_WHEEL,
     LOWER_RIGHT_WHEEL,
-    DIRECTION_BACKWARD,
-    DIRECTION_FORWARD,
 )
-
 
 ## Setting up logger
 LOG_LEVEL = logging.ERROR  # default log level
@@ -95,28 +95,44 @@ def oled(text, image, emoji, stats, v):
     ),
     help="Moves the given wheel backward",
 )
-@click.option(
-    "-stop",
-    type=click.Choice(
-        [UPPER_LEFT_WHEEL, LOWER_LEFT_WHEEL, UPPER_RIGHT_WHEEL, LOWER_RIGHT_WHEEL],
-        case_sensitive=False,
-    ),
-    help="Stop the given wheel",
-)
-@click.option(
-    "-all",
-    type=click.Choice(
-        [DIRECTION_FORWARD, DIRECTION_BACKWARD],
-        case_sensitive=False,
-    ),
-    help="Move all wheels either forward or backwards",
-)
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
-def wheel(forward, backward, stop, all, v):
+def wheel(forward, backward, v):
     set_verbosity_level(v) if v else None
     log.info("Running Wheel test")
-    cmd_opts = wheel_cmd_options(forward=forward, backward=backward, stop=stop, all=all)
+    cmd_opts = wheel_cmd_options(forward=forward, backward=backward)
     cmd = wheel_test()
+    cmd.execute_command(cmd_opts=cmd_opts)
+
+
+@click.command("drive")
+@click.option(
+    "-forward",
+    is_flag=True,
+    help="Drive system drives robot  forward",
+)
+@click.option(
+    "-backward",
+    is_flag=True,
+    help="Drive system drives robot backward",
+)
+@click.option(
+    "-left",
+    is_flag=True,
+    help="Drive system turns robot left",
+)
+@click.option(
+    "-right",
+    is_flag=True,
+    help="Drive system turns robot right",
+)
+@click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
+def drive(forward, backward, left, right, v):
+    set_verbosity_level(v) if v else None
+    log.info("Running Drive System test")
+    cmd = drive_test()
+    cmd_opts = drive_system_cmd_options(
+        forward=forward, backward=backward, left=left, right=right
+    )
     cmd.execute_command(cmd_opts=cmd_opts)
 
 
