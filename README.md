@@ -86,6 +86,46 @@ $ mkvirtualenv bumble
 pip install Mock.GPIO
 ```
 
+## Bumble CLI - Command Line Interface
+
+A command line interface is integrated in the code base for component testing on the Raspberry PI. To deploy the code base and install the binary as a CLI interface, follow the instructions below.
+
+### Deploying the code on Raspberry PI
+
+1. Clone the repository on your development platform.
+
+```sh
+$ git clone https://github.com/hasnainvirk/Bumble.git
+```
+
+2. Deploy code base and install bumble CLI using script.
+
+```sh
+# from the root of your repo, make sure script is executable
+$ chomod +x deploy.sh
+$ ./deploy.sh
+```
+
+The script SSHs into raspberry PI, clones the git repo, and installss the CLI binary. It then runs a command `$ bumble --help` which shows the help page for CLI.
+
+More detailed help can be checked, e.g.,
+
+```sh
+$ bumble oled --help
+Usage: bumble oled [OPTIONS]
+
+Options:
+  -text                     Loads text on the OLED screen
+  -image TEXT               Loads an image on OLED screen. The image should be
+                            in resources folder, e.g. $bumble oled --image
+                            grumpy_cat.jpg
+  -emoji [happy|sad|angry]  Loads an emoji the OLED screen, e.g. $bumble oled
+                            --emoji happy
+  -stats                    Loads usage states on the OLED screen
+  -v                        Verbosity level default=error, v=info, vv=debug
+  --help                    Show this message and exit.
+```
+
 ## Testing Components
 
 ### OLED Panel
@@ -95,6 +135,40 @@ pip install Mock.GPIO
 - Code Reference: https://github.com/adafruit/Adafruit_CircuitPython_SSD1306
 
 ```sh
-#Installing SSD1306 driver library
+#Installing SSD1306 driver library dependency
 $ pip install adafruit-circuitpython-ssd1306
+```
+
+#### Testing Text
+
+OLED screen shows example text in 4 rows.
+
+```sh
+$ bumble oled -text
+```
+
+#### Testing Image
+
+OLED screen shows 1-pixel converted image of an image that is placed in `./component_testing/oled/modules/resources`, e.g.,
+
+```sh
+$ bumble oled -image grumpy_cat.jpg
+```
+
+#### Testing Emoji
+
+OLED screen shows an animated happy emoji, e.g.,
+
+```sh
+$ bumble oled -emoji happy
+```
+
+Other options are `sad` and `angry`
+
+#### Testing Stats
+
+OLED screen shows utilization statistics of CPU. RAM and Disk, e.g.,
+
+```sh
+$ bumble oled -stats
 ```
