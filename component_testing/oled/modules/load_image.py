@@ -1,6 +1,6 @@
 import os
 from PIL import Image
-from oled import Oled
+from component_testing.oled.modules.oled import Oled
 
 
 class LoadImage(Oled):
