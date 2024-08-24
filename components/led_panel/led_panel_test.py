@@ -1,6 +1,7 @@
 from components.led_panel.modules.shapes import (
     bob_face,
     bob_eyes_shut,
+    bob_eyes_open,
     smile,
     matrix_forward,
     matrix_back,
@@ -23,6 +24,7 @@ led_cmd_options = TypedDict(
 class LedPanelTest(object):
     def __init__(self):
         self.__bob_face = bob_face
+        self.__bob_eyes_open = bob_eyes_open
         self.__bob_eyes_shut = bob_eyes_shut
         self.__smile = smile
         self.__matrix_forward = matrix_forward
@@ -46,7 +48,8 @@ class LedPanelTest(object):
                     time.sleep(1)
                     self.__panel.display(self.__matrix_right)
                 elif cmd_opts.get("bob"):
-                    self.__panel.display(self.__bob_face)
+                    # self.__panel.display(self.__bob_face)
+                    self.__panel.display(self.__bob_eyes_open)
                     time.sleep(1)
                     self.__panel.display(self.__bob_eyes_shut)
                     time.sleep(1)
