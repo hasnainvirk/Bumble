@@ -7,9 +7,9 @@ GPIO.setwarnings(False)
 class LedPanel:
     def __init__(self):
         self.__gpio_pins = {
-            "SCLK": 9,
-            "DIO": 10,
-        }  # GPIO_9 Serial Clock, GPIO_10 Data Input/Output
+            "SCLK": 8,
+            "DIO": 9,
+        }  # GPIO_8 Serial Clock, GPIO_9 Data Input/Output
         self.__setup()
 
     def display(self, matrix_value):
