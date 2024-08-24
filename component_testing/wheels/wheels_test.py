@@ -1,10 +1,4 @@
-from component_testing.wheels.modules.upper_left_wheel import (
-    UpperLeftWheel,
-    UPPER_LEFT_WHEEL,
-    LOWER_LEFT_WHEEL,
-    UPPER_RIGHT_WHEEL,
-    LOWER_RIGHT_WHEEL,
-)
+from component_testing.wheels.modules.upper_left_wheel import UpperLeftWheel
 from component_testing.wheels.modules.wheel_iface import (
     wheel_cmd_options,
     wheel_ctrl_options,
@@ -13,6 +7,10 @@ from component_testing.wheels.modules.wheel_iface import (
     DIRECTION_BACKWARD,
     DIRECTION_FORWARD,
     DIRECTION_NONE,
+    UPPER_LEFT_WHEEL,
+    LOWER_LEFT_WHEEL,
+    UPPER_RIGHT_WHEEL,
+    LOWER_RIGHT_WHEEL,
 )
 
 
