@@ -45,6 +45,7 @@ class Stats(Oled):
                     "top -bn1 | grep load | awk '{printf \"CPU Load: %.2f\", $(NF-2)}'"
                 )
                 cpu = subprocess.check_output(cmd, shell=True).decode("utf-8").strip()
+                cpu = cpu.replace("CPU Load: ", "")
             except subprocess.CalledProcessError as e:
                 cpu = "N/A"
                 self.log.error(f"Error getting CPU load: {e}")
@@ -54,6 +55,7 @@ class Stats(Oled):
                 mem_usage = (
                     subprocess.check_output(cmd, shell=True).decode("utf-8").strip()
                 )
+                mem_usage = mem_usage.replace("Mem: ", "")
             except subprocess.CalledProcessError as e:
                 mem_usage = "N/A"
                 self.log.error(f"Error getting memory usage: {e}")
@@ -61,16 +63,33 @@ class Stats(Oled):
             try:
                 cmd = 'df -h | awk \'$NF=="/"{printf "Disk: %d/%dGB %s", $3,$2,$5}\''
                 disk = subprocess.check_output(cmd, shell=True).decode("utf-8").strip()
+                disk = disk.replace("Disk: ", "")
             except subprocess.CalledProcessError as e:
                 disk = "N/A"
                 self.log.error(f"Error getting disk usage: {e}")
 
             try:
-                # Write two lines of text.
-                self.draw.text((x, top), "IP: " + str(ip), font=self.font, fill=1)
-                self.draw.text((x, top + 16), str(cpu), font=self.font, fill=1)
-                self.draw.text((x, top + 31), str(mem_usage), font=self.font, fill=1)
-                self.draw.text((x, top + 46), str(disk), font=self.font, fill=1)
+                self.draw.text((x, top), "IP: ", font=self.font, fill=255)
+                ip_width, _ = self.draw.textsize("IP: ", font=self.font)
+                self.draw.text((x + ip_width, top), str(ip), font=self.font, fill=1)
+
+                self.draw.text((x, top + 16), "CPU Load: ", font=self.font, fill=255)
+                cpu_width, _ = self.draw.textsize("CPU Load: ", font=self.font)
+                self.draw.text(
+                    (x + cpu_width, top + 16), str(cpu), font=self.font, fill=1
+                )
+
+                self.draw.text((x, top + 31), "RAM: ", font=self.font, fill=255)
+                ram_width, _ = self.draw.textsize("RAM: ", font=self.font)
+                self.draw.text(
+                    (x + ram_width, top + 31), str(mem_usage), font=self.font, fill=1
+                )
+
+                self.draw.text((x, top + 46), "DISK: ", font=self.font, fill=255)
+                disk_width, _ = self.draw.textsize("DISK: ", font=self.font)
+                self.draw.text(
+                    (x + disk_width, top + 46), str(disk), font=self.font, fill=1
+                )
 
                 # Display image.
                 self.disp.image(self.image)
