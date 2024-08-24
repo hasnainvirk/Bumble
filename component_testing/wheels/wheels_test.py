@@ -1,5 +1,8 @@
 import time
 from component_testing.wheels.modules.upper_left_wheel import UpperLeftWheel
+from component_testing.wheels.modules.lower_left_wheel import LowerLeftWheel
+from component_testing.wheels.modules.upper_right_wheel import UpperRightWheel
+from component_testing.wheels.modules.lower_right_wheel import LowerRightWheel
 from component_testing.wheels.modules.wheel_iface import (
     wheel_cmd_options,
     wheel_ctrl_options,
@@ -19,9 +22,9 @@ class WheelsTest(object):
     def __init__(self):
         self.__ctrl: wheel_ctrl_options = {}
         self.__ctrl.update({UPPER_LEFT_WHEEL: UpperLeftWheel()})
-        self.__ctrl.update({LOWER_LEFT_WHEEL: None})
-        self.__ctrl.update({UPPER_RIGHT_WHEEL: None})
-        self.__ctrl.update({LOWER_RIGHT_WHEEL: None})
+        self.__ctrl.update({LOWER_LEFT_WHEEL: LowerLeftWheel()})
+        self.__ctrl.update({UPPER_RIGHT_WHEEL: UpperRightWheel()})
+        self.__ctrl.update({LOWER_RIGHT_WHEEL: LowerRightWheel()})
         self.wheel: WheelIface = None
 
     def execute_command(self, cmd_opts: wheel_cmd_options):
@@ -49,6 +52,7 @@ class WheelsTest(object):
                     self.wheel.move_backwards()
                 elif direction == DIRECTION_NONE:
                     self.wheel.stop()
+                    break
                 else:
                     raise ValueError(f"Invalid direction: {direction}")
             except KeyboardInterrupt:

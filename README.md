@@ -184,4 +184,4 @@ The motors that move the wheels are connected to TB6612 motor driving chips. The
 | UpperLeft  | M1A                      | M2                      | GPIO_20 pulled Low, GPIO_21 pulled High | forward   | GPIO_0      |
 | LowerLeft  | M1B                      | M1                      | GPIO_22 pulled High, GPIO_23 pulled Low | forward   | GPIO_1      |
 | UpperRight | M2A                      | M3                      | GPIO_24 pulled High, GPIO_25 pulled Low | forward   | GPIO_12     |
-| LowerRight | M2B                      | M4                      | GPIO_24 pulled Low, GPIO_25 pulled High | forward   | GPIO_13     |
+| LowerRight | M2B                      | M4                      | GPIO_26 pulled Low, GPIO_27 pulled High | forward   | GPIO_13     |
