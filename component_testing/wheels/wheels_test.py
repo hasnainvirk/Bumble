@@ -35,13 +35,30 @@ class WheelsTest(object):
             self.__handle_wheel(cmd_opts.get("backward"), DIRECTION_BACKWARD)
         elif cmd_opts.get("stop"):
             self.__handle_wheel(cmd_opts.get("stop"), DIRECTION_NONE)
+        elif cmd_opts.get("all"):
+            self.__four_wheel_drive(cmd_opts.get("all"))
+
+    def __four_wheel_drive(self, direction: str):
+        while True:
+            time.sleep(0.01)
+            try:
+                for self.wheel in self.__ctrl:
+                    if direction == DIRECTION_FORWARD:
+                        self.wheel.move_forward()
+                    elif direction == DIRECTION_BACKWARD:
+                        self.wheel.move_backwards()
+                    else:
+                        break
+            except KeyboardInterrupt:
+                break
+
+        for self.wheel in self.__ctrl:
+            self.wheel.stop()
 
     def __handle_wheel(self, wheel_name: str, direction: str) -> wheel_status:
         self.wheel = self.__ctrl.get(wheel_name)
         if not self.wheel:
             raise ValueError(f"Invalid wheel name: {wheel_name}")
-
-        self.__ctrl.update({f"{wheel_name}_dir": direction})
 
         while True:
             time.sleep(0.01)

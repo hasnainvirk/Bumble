@@ -11,6 +11,8 @@ from component_testing.wheels.modules.wheel_iface import (
     UPPER_RIGHT_WHEEL,
     LOWER_LEFT_WHEEL,
     LOWER_RIGHT_WHEEL,
+    DIRECTION_BACKWARD,
+    DIRECTION_FORWARD,
 )
 
 
@@ -101,14 +103,21 @@ def oled(text, image, emoji, stats, v):
     ),
     help="Stop the given wheel",
 )
+@click.option(
+    "-all",
+    type=click.Choice(
+        [DIRECTION_FORWARD, DIRECTION_BACKWARD],
+        case_sensitive=False,
+    ),
+    help="Move all wheels either forward or backwards",
+)
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
-def wheel(forward, backward, stop, v):
+def wheel(forward, backward, stop, all, v):
     set_verbosity_level(v) if v else None
     log.info("Running Wheel test")
-    cmd_opts = wheel_cmd_options(forward=forward, backward=backward, stop=stop)
+    cmd_opts = wheel_cmd_options(forward=forward, backward=backward, stop=stop, all=all)
     cmd = wheel_test()
-    status = cmd.execute_command(cmd_opts=cmd_opts)
-    log.debug(f"Wheel status: {status}")
+    cmd.execute_command(cmd_opts=cmd_opts)
 
 
 def print_help_and_exit(command: click.command):

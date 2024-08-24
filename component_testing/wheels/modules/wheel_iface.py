@@ -30,6 +30,7 @@ wheel_cmd_options = TypedDict(
         "forward": Optional[str],
         "backward": Optional[str],
         "stop": Optional[str],
+        "all": Optional[str],
     },
 )
 
@@ -68,6 +69,10 @@ class WheelIface(metaclass=abc.ABCMeta):
     def get_speed(self) -> int:
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def get_name(self) -> str:
+        raise NotImplementedError
+
 
 wheel_ctrl_options = TypedDict(
     "wheel_ctrl_options",
@@ -80,21 +85,5 @@ wheel_ctrl_options = TypedDict(
         "upper_right": Optional[WheelIface],
         # object to control the lower right wheel
         "lower_right": Optional[WheelIface],
-        # move all 4 wheels simultaneously forward
-        "4wd_forward": Optional[bool],
-        # move all 4 wheels simultaneously backward
-        "4wd_backward": Optional[bool],
-        # stop all 4 wheels simultaneously
-        "4wd_stop": Optional[bool],
-        # move upper left wheel forward
-        "upper_left_dir": Optional[str],
-        # move lower left wheel forward
-        "lower_left_dir": Optional[str],
-        # move upper right wheel forward
-        "upper_right_dir": Optional[str],
-        # move lower right wheel forward
-        "lower_right_dir": Optional[str],
-        # set speed for all 4 wheels
-        "speed": Optional[int],
     },
 )
