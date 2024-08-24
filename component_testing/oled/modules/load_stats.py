@@ -24,7 +24,7 @@ class Stats(Oled):
         font_path = os.path.join(
             os.path.dirname(__file__), RESOURCES_FOLDER, "Minecraftia-Regular.ttf"
         )
-        self.font = ImageFont.truetype(font_path, 12)
+        self.font = ImageFont.truetype(font_path, 8)
 
         while True:
             # Draw a black filled box to clear the image.
@@ -68,9 +68,9 @@ class Stats(Oled):
             try:
                 # Write two lines of text.
                 self.draw.text((x, top), "IP: " + str(ip), font=self.font, fill=1)
-                self.draw.text((x, top + 8), str(cpu), font=self.font, fill=1)
-                self.draw.text((x, top + 16), str(mem_usage), font=self.font, fill=1)
-                self.draw.text((x, top + 25), str(disk), font=self.font, fill=1)
+                self.draw.text((x, top + 16), str(cpu), font=self.font, fill=1)
+                self.draw.text((x, top + 31), str(mem_usage), font=self.font, fill=1)
+                self.draw.text((x, top + 46), str(disk), font=self.font, fill=1)
 
                 # Display image.
                 self.disp.image(self.image)
