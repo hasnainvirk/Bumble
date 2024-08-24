@@ -54,6 +54,11 @@ def cli():
     type=click.Choice(["happy", "sad", "angry"], case_sensitive=False),
     help="Loads an emoji the OLED screen, e.g. $bumble oled --emoji happy",
 )
+@click.option(
+    "-states",
+    is_flag=True,
+    help="Loads usage states on the OLED screen",
+)
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
 def oled(text, image, emoji, v):
     set_verbosity_level(v) if v else None

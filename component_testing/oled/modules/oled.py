@@ -34,6 +34,8 @@ test_cmd_options = TypedDict(
         "image": Optional[str],
         # run oled command with emoji on OLED screen
         "emoji": Optional[str],
+        # run oled command with usage states on OLED screen
+        "states": Optional[bool],
     },
 )
 

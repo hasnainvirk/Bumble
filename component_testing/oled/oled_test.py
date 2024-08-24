@@ -1,4 +1,4 @@
-from component_testing.oled.modules import load_emoji, load_image, load_text
+from component_testing.oled.modules import load_emoji, load_image, load_text, load_stats
 from component_testing.oled.modules.oled import (
     AREA_1,
     AREA_2,
@@ -13,6 +13,7 @@ class OledTest(object):
         self.text = load_text.Text()
         self.image = load_image.Image()
         self.emoji = load_emoji.Emoji()
+        self.states = load_stats.Stats()
 
     def execute_command(self, cmd_opts: test_cmd_options):
         if cmd_opts.get("text"):
@@ -21,6 +22,8 @@ class OledTest(object):
             self.__test_image_load(cmd_opts.get("image"))
         if cmd_opts.get("emoji"):
             self.__test_emoji_load(cmd_opts.get("emoji"))
+        if cmd_opts.get("stats"):
+            self.__test_stats_load()
 
     def __test_text_areas(self):
         self.text.write_area("Hello, World!", AREA_1)
@@ -33,3 +36,6 @@ class OledTest(object):
 
     def __test_emoji_load(self, ctype: str):
         self.emoji.load_emoji(ctype)
+
+    def __test_stats_load(self):
+        self.states.load_stats()
