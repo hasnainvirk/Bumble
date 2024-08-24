@@ -1,4 +1,4 @@
-from oled import Oled
+from component_testing.oled.modules.oled import Oled
 
 
 class TextAreas(Oled):
