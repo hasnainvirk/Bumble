@@ -1,4 +1,4 @@
-from component_testing.oled.modules.oled import Oled, RESOURCES_FOLDER
+from components.oled.modules.oled import Oled, RESOURCES_FOLDER
 from PIL import ImageFont
 
 import subprocess

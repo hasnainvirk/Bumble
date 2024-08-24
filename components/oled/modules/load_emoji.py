@@ -1,6 +1,6 @@
 import time
 from PIL import Image, ImageDraw
-from component_testing.oled.modules.oled import (
+from components.oled.modules.oled import (
     Oled,
     HAPPY,
     SAD,

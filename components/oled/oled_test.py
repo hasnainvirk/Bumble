@@ -1,5 +1,5 @@
-from component_testing.oled.modules import load_emoji, load_image, load_text, load_stats
-from component_testing.oled.modules.oled import (
+from components.oled.modules import load_emoji, load_image, load_text, load_stats
+from components.oled.modules.oled import (
     AREA_1,
     AREA_2,
     AREA_3,

@@ -88,7 +88,7 @@ pip install Mock.GPIO
 
 ## Bumble CLI - Command Line Interface
 
-A command line interface is integrated in the code base for component testing on the Raspberry PI. To deploy the code base and install the binary as a CLI interface, follow the instructions below.
+A command line interface is integrated in the code base for components testing on the Raspberry PI. To deploy the code base and install the binary as a CLI interface, follow the instructions below.
 
 ### Deploying the code on Raspberry PI
 
@@ -149,7 +149,7 @@ $ bumble oled -text
 
 #### Testing Image
 
-OLED screen shows 1-pixel converted image of an image that is placed in `./component_testing/oled/modules/resources`, e.g.,
+OLED screen shows 1-pixel converted image of an image that is placed in `./components/oled/modules/resources`, e.g.,
 
 ```sh
 $ bumble oled -image grumpy_cat.jpg

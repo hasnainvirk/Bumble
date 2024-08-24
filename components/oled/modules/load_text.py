@@ -1,4 +1,4 @@
-from component_testing.oled.modules.oled import Oled
+from components.oled.modules.oled import Oled
 
 
 class Text(Oled):

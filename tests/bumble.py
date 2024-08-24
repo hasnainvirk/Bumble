@@ -2,10 +2,10 @@ import logging
 import sys
 import click
 from colorlog import ColoredFormatter
-from component_testing.oled.oled_test import OledTest as oled_test
-from component_testing.wheels.wheels_test import WheelsTest as wheel_test
-from component_testing.oled.modules.oled import test_cmd_options
-from component_testing.wheels.modules.wheel_iface import (
+from components.oled.oled_test import OledTest as oled_test
+from components.wheels.wheels_test import WheelsTest as wheel_test
+from components.oled.modules.oled import test_cmd_options
+from components.wheels.modules.wheel_iface import (
     wheel_cmd_options,
     UPPER_LEFT_WHEEL,
     UPPER_RIGHT_WHEEL,

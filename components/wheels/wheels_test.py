@@ -1,9 +1,9 @@
 import time
-from component_testing.wheels.modules.upper_left_wheel import UpperLeftWheel
-from component_testing.wheels.modules.lower_left_wheel import LowerLeftWheel
-from component_testing.wheels.modules.upper_right_wheel import UpperRightWheel
-from component_testing.wheels.modules.lower_right_wheel import LowerRightWheel
-from component_testing.wheels.modules.wheel_iface import (
+from components.wheels.modules.upper_left_wheel import UpperLeftWheel
+from components.wheels.modules.lower_left_wheel import LowerLeftWheel
+from components.wheels.modules.upper_right_wheel import UpperRightWheel
+from components.wheels.modules.lower_right_wheel import LowerRightWheel
+from components.wheels.modules.wheel_iface import (
     wheel_cmd_options,
     wheel_ctrl_options,
     WheelIface,
