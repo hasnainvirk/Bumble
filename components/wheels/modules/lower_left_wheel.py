@@ -1,10 +1,6 @@
 import RPi.GPIO as GPIO
 from components.wheels.modules.wheel_iface import (
     WheelIface,
-    wheel_status,
-    WHEEL_MOVING_FORWARD,
-    WHEEL_MOVING_BACKWARD,
-    WHEEL_STOPPED,
     LOWER_LEFT_WHEEL,
 )
 
@@ -30,36 +26,18 @@ class LowerLeftWheel(WheelIface):
     def get_name(self):
         return self.__name
 
-    def move_forward(self) -> wheel_status:
+    def move_forward(self):
         GPIO.output(self.__gpio_pins.get("GPIO_22"), GPIO.HIGH)  # Lower Left forward
         GPIO.output(self.__gpio_pins.get("GPIO_23"), GPIO.LOW)
         self.__set_duty_cycle(80)
-        status: wheel_status = {
-            "name": self.__name,
-            "speed": self.__speed,
-            "retcode": WHEEL_MOVING_FORWARD,
-        }
-        return status
 
-    def move_backwards(self) -> wheel_status:
+    def move_backwards(self):
         GPIO.output(self.__gpio_pins.get("GPIO_22"), GPIO.LOW)  # Upper Left backwards
         GPIO.output(self.__gpio_pins.get("GPIO_23"), GPIO.HIGH)
         self.__set_duty_cycle(80)
-        status: wheel_status = {
-            "name": self.__name,
-            "speed": self.__speed,
-            "retcode": WHEEL_MOVING_BACKWARD,
-        }
-        return status
 
-    def stop(self) -> wheel_status:
+    def stop(self):
         self.__set_duty_cycle(0)
-        status: wheel_status = {
-            "name": self.__name,
-            "speed": self.__speed,
-            "retcode": WHEEL_STOPPED,
-        }
-        return status
 
     def __get_wheel_ready(self):
         GPIO.setmode(GPIO.BCM)

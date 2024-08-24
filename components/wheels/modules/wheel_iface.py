@@ -13,15 +13,6 @@ DIRECTION_FORWARD = "forward"
 DIRECTION_BACKWARD = "backward"
 DIRECTION_NONE = "none"
 
-wheel_status = TypedDict(
-    "wheel_status",
-    {
-        "name": str,
-        "speed": int,
-        "retcode": int,
-    },
-)
-
 
 class WheelIface(metaclass=abc.ABCMeta):
     """
@@ -38,15 +29,15 @@ class WheelIface(metaclass=abc.ABCMeta):
         )
 
     @abc.abstractmethod
-    def move_forward(self) -> wheel_status:
+    def move_forward(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def move_backwards(self) -> wheel_status:
+    def move_backwards(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def stop(self) -> wheel_status:
+    def stop(self):
         raise NotImplementedError
 
     @abc.abstractmethod

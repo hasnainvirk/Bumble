@@ -5,10 +5,8 @@ from components.wheels.modules.lower_left_wheel import LowerLeftWheel
 from components.wheels.modules.upper_right_wheel import UpperRightWheel
 from components.wheels.modules.lower_right_wheel import LowerRightWheel
 from components.wheels.modules.wheel_iface import (
-    wheel_cmd_options,
     wheel_ctrl_options,
     WheelIface,
-    wheel_status,
     DIRECTION_BACKWARD,
     DIRECTION_FORWARD,
     DIRECTION_NONE,
@@ -43,7 +41,7 @@ class WheelsTest(object):
         elif cmd_opts.get("backward"):
             self.__handle_wheel(cmd_opts.get("backward"), DIRECTION_BACKWARD)
 
-    def __handle_wheel(self, wheel_name: str, direction: str) -> wheel_status:
+    def __handle_wheel(self, wheel_name: str, direction: str):
         self.wheel = self.__ctrl.get(wheel_name)
         if not self.wheel:
             raise ValueError(f"Invalid wheel name: {wheel_name}")
