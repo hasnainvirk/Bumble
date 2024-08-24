@@ -39,10 +39,17 @@ class WheelsTest(object):
             self.__four_wheel_drive(cmd_opts.get("all"))
 
     def __four_wheel_drive(self, direction: str):
+        wheels = [
+            UPPER_LEFT_WHEEL,
+            LOWER_LEFT_WHEEL,
+            UPPER_RIGHT_WHEEL,
+            LOWER_RIGHT_WHEEL,
+        ]
         while True:
             time.sleep(0.01)
             try:
-                for self.wheel in self.__ctrl:
+                for wheel in wheels:
+                    self.wheel = self.__ctrl.get(wheel)
                     if direction == DIRECTION_FORWARD:
                         self.wheel.move_forward()
                     elif direction == DIRECTION_BACKWARD:
