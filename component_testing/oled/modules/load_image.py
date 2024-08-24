@@ -1,5 +1,5 @@
 import os
-from PIL import Image
+from PIL import Image as pil_image
 from component_testing.oled.modules.oled import Oled
 
 
@@ -18,7 +18,7 @@ class Image(Oled):
 
         try:
             # Open an image file
-            image = Image.open(self.image_path)
+            image = pil_image.open(self.image_path)
         except IOError as e:
             self.log.error(f"Error opening image file: {e}")
             return
