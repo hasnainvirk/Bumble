@@ -172,3 +172,16 @@ OLED screen shows utilization statistics of CPU. RAM and Disk, e.g.,
 ```sh
 $ bumble oled -stats
 ```
+
+## Wheels
+
+The motors that move the wheels are connected to TB6612 motor driving chips. There are two of these chips located on the control shield that sits on top of the Raspberry PI. Here are the schematics:
+
+![architecture](img/motor_schematics.png)
+
+| Wheel      | Motor name on schematics | Motor name on the board | R.PI GPIO PIN & Pull                    | Direction | speed (PWM) |
+| ---------- | ------------------------ | ----------------------- | --------------------------------------- | --------- | ----------- |
+| UpperLeft  | M1A                      | M2                      | GPIO_20 pulled Low, GPIO_21 pulled High | forward   | GPIO_0      |
+| LowerLeft  | M1B                      | M1                      | GPIO_22 pulled High, GPIO_23 pulled Low | forward   | GPIO_1      |
+| UpperRight | M2A                      | M3                      | GPIO_24 pulled High, GPIO_25 pulled Low | forward   | GPIO_12     |
+| LowerRight | M2B                      | M4                      | GPIO_24 pulled Low, GPIO_25 pulled High | forward   | GPIO_13     |

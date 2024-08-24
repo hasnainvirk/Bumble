@@ -3,7 +3,15 @@ import sys
 import click
 from colorlog import ColoredFormatter
 from component_testing.oled.oled_test import OledTest as oled_test
+from component_testing.wheels.wheels_test import WheelsTest as wheel_test
 from component_testing.oled.modules.oled import test_cmd_options
+from component_testing.wheels.modules.wheel_iface import (
+    wheel_cmd_options,
+    UPPER_LEFT_WHEEL,
+    UPPER_RIGHT_WHEEL,
+    LOWER_LEFT_WHEEL,
+    LOWER_RIGHT_WHEEL,
+)
 
 
 ## Setting up logger
@@ -66,6 +74,41 @@ def oled(text, image, emoji, stats, v):
     cmd = oled_test()
     cmd_opts = test_cmd_options(text=text, image=image, emoji=emoji, stats=stats)
     cmd.execute_command(cmd_opts=cmd_opts)
+
+
+@cli.command("wheel")
+@click.option(
+    "-forward",
+    type=click.Choice(
+        [UPPER_LEFT_WHEEL, LOWER_LEFT_WHEEL, UPPER_RIGHT_WHEEL, LOWER_RIGHT_WHEEL],
+        case_sensitive=False,
+    ),
+    help="Moves the given wheel forward",
+)
+@click.option(
+    "-backward",
+    type=click.Choice(
+        [UPPER_LEFT_WHEEL, LOWER_LEFT_WHEEL, UPPER_RIGHT_WHEEL, LOWER_RIGHT_WHEEL],
+        case_sensitive=False,
+    ),
+    help="Moves the given wheel backward",
+)
+@click.option(
+    "-stop",
+    type=click.Choice(
+        [UPPER_LEFT_WHEEL, LOWER_LEFT_WHEEL, UPPER_RIGHT_WHEEL, LOWER_RIGHT_WHEEL],
+        case_sensitive=False,
+    ),
+    help="Stop the given wheel",
+)
+@click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
+def wheel(forward, backward, stop, v):
+    set_verbosity_level(v) if v else None
+    log.info("Running Wheel test")
+    cmd_opts = wheel_cmd_options(forward=forward, backward=backward, stop=stop)
+    cmd = wheel_test()
+    status = cmd.execute_command(cmd_opts=cmd_opts)
+    log.debug(f"Wheel status: {status}")
 
 
 def print_help_and_exit(command: click.command):

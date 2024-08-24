@@ -1,0 +1,100 @@
+import abc
+
+from typing import TypedDict, Optional
+
+WHEEL_MOVING_FORWARD = 100
+WHEEL_MOVING_BACKWARD = 200
+WHEEL_STOPPED = 300
+
+UPPER_LEFT_WHEEL = "upper_left"
+LOWER_LEFT_WHEEL = "lower_left"
+UPPER_RIGHT_WHEEL = "upper_right"
+LOWER_RIGHT_WHEEL = "lower_right"
+DIRECTION_FORWARD = "forward"
+DIRECTION_BACKWARD = "backward"
+DIRECTION_NONE = "none"
+
+wheel_status = TypedDict(
+    "wheel_status",
+    {
+        "name": str,
+        "speed": int,
+        "retcode": int,
+    },
+)
+
+
+wheel_cmd_options = TypedDict(
+    "wheel_cmd_options",
+    {
+        "forward": Optional[str],
+        "backward": Optional[str],
+        "stop": Optional[str],
+    },
+)
+
+
+class WheelIface(metaclass=abc.ABCMeta):
+    """
+    Abstract class to provide a common interface binding for Wheels of the robot.
+    Children must implement abstract methods.
+    """
+
+    wheel = None
+
+    @classmethod
+    def __subclasshook__(cls, subclass):
+        return hasattr(subclass, "move_forward", "move_backwards", "stop") and callable(
+            subclass.move_forward, subclass.move_backwards, subclass.stop
+        )
+
+    @abc.abstractmethod
+    def move_forward(self) -> wheel_status:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def move_backwards(self) -> wheel_status:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def stop(self) -> wheel_status:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def set_speed(self, speed: int):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def get_speed(self) -> int:
+        raise NotImplementedError
+
+
+wheel_ctrl_options = TypedDict(
+    "wheel_ctrl_options",
+    {
+        # object to control the upper left wheel
+        "upper_left": Optional[WheelIface],
+        # object to control the lower left wheel
+        "lower_left": Optional[WheelIface],
+        # object to control the upper right wheel
+        "upper_right": Optional[WheelIface],
+        # object to control the lower right wheel
+        "lower_right": Optional[WheelIface],
+        # move all 4 wheels simultaneously forward
+        "4wd_forward": Optional[bool],
+        # move all 4 wheels simultaneously backward
+        "4wd_backward": Optional[bool],
+        # stop all 4 wheels simultaneously
+        "4wd_stop": Optional[bool],
+        # move upper left wheel forward
+        "upper_left_dir": Optional[str],
+        # move lower left wheel forward
+        "lower_left_dir": Optional[str],
+        # move upper right wheel forward
+        "upper_right_dir": Optional[str],
+        # move lower right wheel forward
+        "lower_right_dir": Optional[str],
+        # set speed for all 4 wheels
+        "speed": Optional[int],
+    },
+)
