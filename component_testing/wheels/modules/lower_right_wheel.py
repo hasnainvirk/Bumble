@@ -31,7 +31,7 @@ class LowerRightWheel(WheelIface):
         return self.__name
 
     def move_forward(self) -> wheel_status:
-        GPIO.output(self.__gpio_pins.get("GPIO_26"), GPIO.LOW)  # Lower Left forward
+        GPIO.output(self.__gpio_pins.get("GPIO_26"), GPIO.LOW)  # Lower right forward
         GPIO.output(self.__gpio_pins.get("GPIO_27"), GPIO.HIGH)
         self.__set_duty_cycle(80)
         status: wheel_status = {
@@ -42,8 +42,8 @@ class LowerRightWheel(WheelIface):
         return status
 
     def move_backwards(self) -> wheel_status:
-        GPIO.output(self.__gpio_pins.get("GPIO_22"), GPIO.HIGH)  # Upper Left backwards
-        GPIO.output(self.__gpio_pins.get("GPIO_23"), GPIO.LOW)
+        GPIO.output(self.__gpio_pins.get("GPIO_26"), GPIO.HIGH)  # Lower Right backwards
+        GPIO.output(self.__gpio_pins.get("GPIO_27"), GPIO.LOW)
         self.__set_duty_cycle(80)
         status: wheel_status = {
             "name": self.__name,
