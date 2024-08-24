@@ -3,7 +3,7 @@ from PIL import Image
 from component_testing.oled.modules.oled import Oled
 
 
-class LoadImage(Oled):
+class Image(Oled):
     def __init__(self) -> None:
         super().__init__()
 

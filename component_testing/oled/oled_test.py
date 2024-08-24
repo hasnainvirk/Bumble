@@ -1,4 +1,4 @@
-from component_testing.oled.modules import load_emoji, load_image, text_areas
+from component_testing.oled.modules import load_emoji, load_image, load_text
 from component_testing.oled.modules.oled import (
     AREA_1,
     AREA_2,
@@ -10,9 +10,9 @@ from component_testing.oled.modules.oled import (
 
 class OledTest(object):
     def __init__(self) -> None:
-        self.text = text_areas.TextAreas()
-        self.image = load_image.LoadImage()
-        self.emoji = load_emoji.LoadEmoji()
+        self.text = load_text.Text()
+        self.image = load_image.Image()
+        self.emoji = load_emoji.Emoji()
 
     def execute_command(self, cmd_opts: test_cmd_options):
         if cmd_opts.get("text"):

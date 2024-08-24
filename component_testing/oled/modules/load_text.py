@@ -1,7 +1,7 @@
 from component_testing.oled.modules.oled import Oled
 
 
-class TextAreas(Oled):
+class Text(Oled):
     def __init__(self) -> None:
         super().__init__()
         self.create_text_areas()
