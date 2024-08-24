@@ -70,23 +70,29 @@ class Stats(Oled):
 
             try:
                 self.draw.text((x, top), "IP: ", font=self.font, fill=255)
-                ip_width, _ = self.draw.textsize("IP: ", font=self.font)
+                ip_bbox = self.draw.textbbox((x, top), "IP: ", font=self.font)
+                ip_width = ip_bbox[2] - ip_bbox[0]
                 self.draw.text((x + ip_width, top), str(ip), font=self.font, fill=1)
 
                 self.draw.text((x, top + 16), "CPU Load: ", font=self.font, fill=255)
-                cpu_width, _ = self.draw.textsize("CPU Load: ", font=self.font)
+                cpu_bbox = self.draw.textbbox(
+                    (x, top + 16), "CPU Load: ", font=self.font
+                )
+                cpu_width = cpu_bbox[2] - cpu_bbox[0]
                 self.draw.text(
                     (x + cpu_width, top + 16), str(cpu), font=self.font, fill=1
                 )
 
                 self.draw.text((x, top + 31), "RAM: ", font=self.font, fill=255)
-                ram_width, _ = self.draw.textsize("RAM: ", font=self.font)
+                ram_bbox = self.draw.textbbox((x, top + 31), "RAM: ", font=self.font)
+                ram_width = ram_bbox[2] - ram_bbox[0]
                 self.draw.text(
                     (x + ram_width, top + 31), str(mem_usage), font=self.font, fill=1
                 )
 
                 self.draw.text((x, top + 46), "DISK: ", font=self.font, fill=255)
-                disk_width, _ = self.draw.textsize("DISK: ", font=self.font)
+                disk_bbox = self.draw.textbbox((x, top + 46), "DISK: ", font=self.font)
+                disk_width = disk_bbox[2] - disk_bbox[0]
                 self.draw.text(
                     (x + disk_width, top + 46), str(disk), font=self.font, fill=1
                 )
