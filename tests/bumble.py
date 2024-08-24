@@ -60,11 +60,11 @@ def cli():
     help="Loads usage states on the OLED screen",
 )
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
-def oled(text, image, emoji, v):
+def oled(text, image, emoji, states, v):
     set_verbosity_level(v) if v else None
     log.info("Running OLED test")
     cmd = oled_test()
-    cmd_opts = test_cmd_options(text=text, image=image, emoji=emoji)
+    cmd_opts = test_cmd_options(text=text, image=image, emoji=emoji, states=states)
     cmd.execute_command(cmd_opts=cmd_opts)
 
 
