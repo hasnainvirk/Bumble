@@ -185,3 +185,51 @@ The motors that move the wheels are connected to TB6612 motor driving chips. The
 | LowerLeft  | M1B                      | M1                      | GPIO_22 pulled High, GPIO_23 pulled Low | forward   | GPIO_1      |
 | UpperRight | M2A                      | M3                      | GPIO_24 pulled High, GPIO_25 pulled Low | forward   | GPIO_12     |
 | LowerRight | M2B                      | M4                      | GPIO_26 pulled Low, GPIO_27 pulled High | forward   | GPIO_13     |
+
+### Testing wheels individually
+
+1. Check CLI help.
+
+```sh
+$ bumble wheel --help
+```
+
+2. For example, move `upper_left` wheel forward
+
+```sh
+$ bumble wheel -forward upper_left
+```
+
+3. Similarly, move `lower_right` wheel backwards
+
+```sh
+$ bumble wheel -backward lower_right
+```
+
+## Drive System
+
+For example,
+
+- Drive forward
+
+```sh
+$ bumble -drive forward
+```
+
+- Drive backward
+
+```sh
+$ bumble -drive backward
+```
+
+- Turn right
+
+```sh
+$ bumble -drive right
+```
+
+- Turn left
+
+```sh
+$ bumble -drive left
+```
