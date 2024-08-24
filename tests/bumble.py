@@ -104,7 +104,7 @@ def wheel(forward, backward, v):
     cmd.execute_command(cmd_opts=cmd_opts)
 
 
-@click.command("drive")
+@cli.command("drive")
 @click.option(
     "-forward",
     is_flag=True,
