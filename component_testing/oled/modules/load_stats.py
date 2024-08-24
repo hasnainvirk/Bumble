@@ -1,4 +1,5 @@
 from component_testing.oled.modules.oled import Oled
+from PIL import ImageFont
 
 import subprocess
 import time
@@ -18,6 +19,9 @@ class Stats(Oled):
         bottom = self.disp.height - padding
         # Move left to right keeping track of the current x position for drawing shapes.
         x = 0
+
+        # Load default font.
+        self.font = ImageFont.truetype(ImageFont.load_default())
 
         while True:
             # Draw a black filled box to clear the image.
