@@ -27,6 +27,11 @@ from components.ultrasonic_sensor.ultrasonic_sensor_test import (
     UltrasonicSensorTest as ultrasonic_sensor_test,
 )
 
+from components.servos.ultrasonic_servo_test import (
+    UltrasonicSensorServoTest as ultrasonic_servo_test,
+    servo_cmd_options,
+)
+
 ## Setting up logger
 LOG_LEVEL = logging.ERROR  # default log level
 LOGFORMAT = " %(log_color)s%(levelname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"
@@ -183,6 +188,37 @@ def ultrasonic(v):
     log.info("Running Ultrasonic Sensor test")
     cmd = ultrasonic_sensor_test()
     cmd.execute_command()
+
+
+@cli.command("servo")
+@click.option(
+    "-ultrasonic",
+    is_flag=True,
+    help="Selects Ultrasonic Sensor Servo",
+)
+@click.option(
+    "-straight",
+    is_flag=True,
+    help="Points Ultrasonic Sensor Servo straight",
+)
+@click.option(
+    "-right",
+    is_flag=True,
+    help="Turns Ultrasonic Sensor Servo right",
+)
+@click.option(
+    "-left",
+    is_flag=True,
+    help="Turns Ultrasonic Sensor Servo left",
+)
+@click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
+def servo(ultrasonic, straight, right, left, v):
+    set_verbosity_level(v) if v else None
+    log.info("Running Ultrasonic Sensor Servo test")
+    if ultrasonic:
+        cmd = ultrasonic_servo_test()
+        cmd_opts = servo_cmd_options(straight, right, left)
+        cmd.execute_command(cmd_opts=cmd_opts)
 
 
 def print_help_and_exit(command: click.command):
