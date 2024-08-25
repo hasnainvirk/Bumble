@@ -23,6 +23,10 @@ from components.line_tracking_sensor.line_tracking_sensor_test import (
     LineTrackingSensorTest as line_tracking_sensor_test,
 )
 
+from components.ultrasonic_sensor.ultrasonic_sensor_test import (
+    UltrasonicSensorTest as ultrasonic_sensor_test,
+)
+
 ## Setting up logger
 LOG_LEVEL = logging.ERROR  # default log level
 LOGFORMAT = " %(log_color)s%(levelname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"
@@ -169,6 +173,15 @@ def lts(v):
     set_verbosity_level(v) if v else None
     log.info("Running Line Tracking Sensor test")
     cmd = line_tracking_sensor_test()
+    cmd.execute_command()
+
+
+@cli.command("ultrasonic")
+@click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
+def ultrasonic(v):
+    set_verbosity_level(v) if v else None
+    log.info("Running Ultrasonic Sensor test")
+    cmd = ultrasonic_sensor_test()
     cmd.execute_command()
 
 
