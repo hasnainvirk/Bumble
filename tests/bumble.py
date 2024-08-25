@@ -19,6 +19,9 @@ from components.led_panel.led_panel_test import (
     LedPanelTest as led_test,
     led_cmd_options,
 )
+from components.line_tracking_sensor.line_tracking_sensor_test import (
+    LineTrackingSensorTest as line_tracking_sensor_test,
+)
 
 ## Setting up logger
 LOG_LEVEL = logging.ERROR  # default log level
@@ -158,6 +161,15 @@ def led(smile, bob, v):
     cmd = led_test()
     cmd_opts = led_cmd_options(smile=smile, bob=bob)
     cmd.execute_command(cmd_opts=cmd_opts)
+
+
+@cli.command("lts")
+@click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
+def lts(v):
+    set_verbosity_level(v) if v else None
+    log.info("Running Line Tracking Sensor test")
+    cmd = line_tracking_sensor_test()
+    cmd.execute_command()
 
 
 def print_help_and_exit(command: click.command):

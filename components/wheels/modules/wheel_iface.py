@@ -11,6 +11,8 @@ UPPER_RIGHT_WHEEL = "upper_right"
 LOWER_RIGHT_WHEEL = "lower_right"
 DIRECTION_FORWARD = "forward"
 DIRECTION_BACKWARD = "backward"
+DIRECTION_LEFT = "left"
+DIRECTION_RIGHT = "right"
 DIRECTION_NONE = "none"
 
 

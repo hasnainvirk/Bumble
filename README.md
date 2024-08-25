@@ -233,3 +233,30 @@ $ bumble -drive right
 ```sh
 $ bumble -drive left
 ```
+
+## LED Panel
+
+The LED panel a dot matrix of 16x8 pixels. Use this https://dotmatrixtool.com/# tool to create a pattern and get the matrix values out which can be stored in `./components/led_panel/modules/shapes.py`
+
+```sh
+$ bumble led --help
+$ bumble led -bob
+$ bumble led -smile
+```
+
+## Line Tracking Sensor
+
+The principal behind this sensor is to emit infra red radiation and then collect it back to make a decision matrix across three GPIO IN pins.
+
+| L (left) | M (middle) | R (right) | Decision             |
+| -------- | ---------- | --------- | -------------------- |
+| GPIO_19  | GPIO_18    | GPIO_17   | forward, right, left |
+| 1        | 0          | 0         | lef                  |
+| 0        | 0          | 1         | right                |
+| 0        | 1          | 0         | forward              |
+
+In every other case the robot should stop and reevaluate the situation.
+
+```sh
+$ bumble lts
+```
