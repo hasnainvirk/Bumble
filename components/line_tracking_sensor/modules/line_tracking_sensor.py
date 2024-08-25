@@ -36,6 +36,8 @@ class LineTrackingSensor:
         middle = GPIO.input(self.__gpio_pins["GPIO_18"])
         left = GPIO.input(self.__gpio_pins["GPIO_19"])
 
+        self.log.debug(f"Right: {right}, Middle: {middle}, Left: {left}")
+
         if middle == 1:
             return {"right": 0, "middle": 1, "left": 0, "decision": DIRECTION_FORWARD}
         else:
