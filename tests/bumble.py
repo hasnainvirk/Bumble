@@ -197,27 +197,28 @@ def ultrasonic(v):
     help="Selects Ultrasonic Sensor Servo",
 )
 @click.option(
-    "-straight",
-    is_flag=True,
-    help="Points Ultrasonic Sensor Servo straight",
+    "-point",
+    type=click.Choice(
+        ["straight", "right", "left"],
+        case_sensitive=False,
+    ),
+    help="Makes the Ultrasonic Sensor Servo point in the given direction",
 )
 @click.option(
-    "-right",
-    is_flag=True,
-    help="Turns Ultrasonic Sensor Servo right",
-)
-@click.option(
-    "-left",
-    is_flag=True,
-    help="Turns Ultrasonic Sensor Servo left",
+    "-rotate",
+    type=click.Choice(
+        ["center", "right", "left"],
+        case_sensitive=False,
+    ),
+    help="Makes the Ultrasonic Sensor Servo rotate in the given direction",
 )
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
-def servo(ultrasonic, straight, right, left, v):
+def servo(ultrasonic, point, rotate, v):
     set_verbosity_level(v) if v else None
     log.info("Running Ultrasonic Sensor Servo test")
     if ultrasonic:
         cmd = ultrasonic_servo_test()
-        cmd_opts = servo_cmd_options(straight=straight, right=right, left=left)
+        cmd_opts = servo_cmd_options(point=point, rotate=rotate)
         cmd.execute_command(cmd_opts=cmd_opts)
 
 
