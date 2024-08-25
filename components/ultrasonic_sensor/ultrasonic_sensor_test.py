@@ -7,7 +7,7 @@ class UltrasonicSensorTest:
         self.__sensor = UltrasonicSensor()
         self.log = logging.getLogger("bumble")
 
-    def command_execute(self):
+    def execute_command(self):
         try:
             while True:
                 distance = self.__sensor.get_distance()
