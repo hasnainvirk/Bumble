@@ -9,7 +9,7 @@ class UltrasonicSensor:
             "echo": 4,
         }  # GPIO_TRIGGER = 14, GPIO_ECHO = 4
         self.__setup()
-        self.logger = logging.getLogger("bumble")
+        self.log = logging.getLogger("bumble")
 
     def get_distance(self):
         # 10us is the trigger signal
