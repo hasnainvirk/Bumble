@@ -217,7 +217,7 @@ def servo(ultrasonic, straight, right, left, v):
     log.info("Running Ultrasonic Sensor Servo test")
     if ultrasonic:
         cmd = ultrasonic_servo_test()
-        cmd_opts = servo_cmd_options(straight, right, left)
+        cmd_opts = servo_cmd_options(straight=straight, right=right, left=left)
         cmd.execute_command(cmd_opts=cmd_opts)
 
 
