@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 from typing import TypedDict
-from components.drive_system.modules.drive_system import (
+from components.wheels.modules.wheel_iface import (
     DIRECTION_FORWARD,
     DIRECTION_LEFT,
     DIRECTION_RIGHT,
