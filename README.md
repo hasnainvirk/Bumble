@@ -260,3 +260,62 @@ In every other case the robot should stop and reevaluate the situation.
 ```sh
 $ bumble lts
 ```
+
+## Ultrasonic Sensor
+
+The ultrasonic sensor is used to measure the distance to an object by emitting ultrasonic waves and measuring the time it takes for the echo to return. This sensor can be used for obstacle detection and avoidance.
+
+| Pin  | Description    | Connection |
+| ---- | -------------- | ---------- |
+| VCC  | Power supply   | 5V         |
+| GND  | Ground         | GND        |
+| TRIG | Trigger signal | GPIO_14    |
+| ECHO | Echo signal    | GPIO_4     |
+
+You can also interact with the ultrasonic sensor using the command line interface.
+
+```sh
+$ bumble ultrasonic -vvv
+ INFO     | Running Ultrasonic Sensor test
+ DEBUG    | Measured Distance @ Sensor = 189.54 cm
+ DEBUG    | Measured Distance @ UltrasonicSensorTest = 189.54 cm
+```
+
+## Servo for ultrasonic sensor
+
+This servo motor makes the ultrasonic sensor move on a base plate from 0 to 180 degrees.
+
+```sh
+$ bumble servo --help
+Usage: bumble servo [OPTIONS]
+
+Options:
+  -ultrasonic                   Selects Ultrasonic Sensor Servo
+  -point [straight|right|left]  Makes the Ultrasonic Sensor Servo point in the
+                                given direction
+  -rotate [center|right|left]   Makes the Ultrasonic Sensor Servo rotate in
+                                the given direction
+  -v                            Verbosity level default=error, v=info,
+                                vv=debug
+  --help                        Show this message and exit.
+
+```
+
+For example pointing the base plate straight (90 degrees),
+
+```sh
+$ bumble servo -ultrasonic -point straight -vvv
+ INFO     | Running Ultrasonic Sensor Servo test
+ DEBUG    | Ultrasonic Servo - Point straight
+```
+
+Or rotating the base plate all the way to right (0 degree) step by step,
+
+```sh
+$ bumble servo -ultrasonic -rotate right -vvv
+ INFO     | Running Ultrasonic Sensor Servo test
+ DEBUG    | Ultrasonic Servo - Point straight
+ DEBUG    | Ultrasonic Servo - Rotating Right
+
+
+```
