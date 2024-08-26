@@ -1,5 +1,5 @@
-from components.servos.modules.ultrasonic_sensor_servo import (
-    UltrasonicSensorServo as ultrasonic_sensor_servo,
+from components.servos.modules.camera_rotate_servo import (
+    CameraServo as camera_servo,
 )
 import logging
 from typing import TypedDict, Optional
@@ -16,7 +16,7 @@ from typing import TypedDict, Optional
 
 class CameraServoTest:
     def __init__(self):
-        self.servo = ultrasonic_sensor_servo()
+        self.servo = camera_servo()
         self.log = logging.getLogger("bumble")
 
     def execute_command(self, cmd_opts):
