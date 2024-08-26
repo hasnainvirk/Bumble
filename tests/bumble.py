@@ -212,7 +212,7 @@ def ultrasonic(v):
         ["straight", "right", "left"],
         case_sensitive=False,
     ),
-    help="Makes the Ultrasonic Sensor Servo point in the given direction",
+    help="Makes the Servo point in the given direction",
 )
 @click.option(
     "-rotate",
@@ -220,7 +220,7 @@ def ultrasonic(v):
         ["center", "right", "left"],
         case_sensitive=False,
     ),
-    help="Makes the Ultrasonic Sensor Servo rotate in the given direction",
+    help="Makes the Servo rotate in the given direction",
 )
 @click.option(
     "-tilt",
@@ -228,7 +228,7 @@ def ultrasonic(v):
         ["center", "up", "down"],
         case_sensitive=False,
     ),
-    help="Makes the Ultrasonic Sensor Servo rotate in the given direction",
+    help="Makes the camera servo rotate in the given direction",
 )
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
 def servo(ultrasonic, camera, tilt, point, rotate, v):
