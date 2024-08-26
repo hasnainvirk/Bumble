@@ -227,10 +227,10 @@ def ultrasonic(v):
 @click.option(
     "-tilt",
     type=click.Choice(
-        ["center", "up", "down"],
+        ["close", "open"],
         case_sensitive=False,
     ),
-    help="Makes the camera servo rotate in the given direction",
+    help="Makes the camera servo open or shut the camera module",
 )
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
 def servo(ultrasonic, camera, tilt, point, rotate, v):
