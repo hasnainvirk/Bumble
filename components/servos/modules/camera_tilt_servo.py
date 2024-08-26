@@ -3,8 +3,8 @@ import RPi.GPIO as GPIO
 import time, logging
 
 GPIO_6 = 6
-CLOSE_CAMERA_ANGLE = 90
-OPEN_CAMERA_ANGLE = 0
+CLOSE_CAMERA_ANGLE = 0
+OPEN_CAMERA_ANGLE = 90
 
 
 class CameraTiltServo(ServoIface):
