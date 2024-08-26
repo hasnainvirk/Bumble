@@ -12,7 +12,7 @@ class CameraTiltServo(ServoIface):
     def __init__(self):
         super().__init__(gpio_pin=GPIO_6)
         self.log = logging.getLogger("bumble")
-        self.current_angle = POINTING_DOWN_ANGLE
+        self.current_angle = POINTING_CENTER_ANGLE
         self.tilt_down()
 
     def tilt_center(self):
@@ -23,7 +23,7 @@ class CameraTiltServo(ServoIface):
     def tilt_down(self):
         self.log.debug("Camera Servo - Tilting Down")
         for _ in range(0, 50):
-            self.generate_pulse(POINTING_DOWN_ANGLE)
+            self.generate_pulse(POINTING_CENTER_ANGLE)
 
     def tilt_up(self):
         self.log.debug("Camera Servo - Tilting Up")
