@@ -201,7 +201,7 @@ def ultrasonic(v):
 @click.option(
     "-camera",
     is_flag=True,
-    help="Selects Camer Servos",
+    help="Selects Camera Servos",
 )
 @click.option(
     "-point",
@@ -220,12 +220,12 @@ def ultrasonic(v):
     help="Makes the Ultrasonic Sensor Servo rotate in the given direction",
 )
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
-def servo(ultrasonic, point, rotate, v):
+def servo(ultrasonic, camera, point, rotate, v):
     set_verbosity_level(v) if v else None
     log.info("Running Ultrasonic Sensor Servo test")
     if ultrasonic:
         cmd = ultrasonic_servo_test()
-    else:
+    elif camera:
         cmd = camera_servo_test()
     cmd_opts = servo_cmd_options(point=point, rotate=rotate)
     cmd.execute_command(cmd_opts=cmd_opts)
