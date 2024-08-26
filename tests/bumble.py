@@ -32,6 +32,8 @@ from components.servos.ultrasonic_servo_test import (
     servo_cmd_options,
 )
 
+from components.servos.camera_servo_test import CameraServoTest as camera_servo_test
+
 ## Setting up logger
 LOG_LEVEL = logging.ERROR  # default log level
 LOGFORMAT = " %(log_color)s%(levelname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"
@@ -197,6 +199,11 @@ def ultrasonic(v):
     help="Selects Ultrasonic Sensor Servo",
 )
 @click.option(
+    "-camera",
+    is_flag=True,
+    help="Selects Camer Servos",
+)
+@click.option(
     "-point",
     type=click.Choice(
         ["straight", "right", "left"],
@@ -218,8 +225,10 @@ def servo(ultrasonic, point, rotate, v):
     log.info("Running Ultrasonic Sensor Servo test")
     if ultrasonic:
         cmd = ultrasonic_servo_test()
-        cmd_opts = servo_cmd_options(point=point, rotate=rotate)
-        cmd.execute_command(cmd_opts=cmd_opts)
+    else:
+        cmd = camera_servo_test()
+    cmd_opts = servo_cmd_options(point=point, rotate=rotate)
+    cmd.execute_command(cmd_opts=cmd_opts)
 
 
 def print_help_and_exit(command: click.command):
