@@ -35,7 +35,9 @@ from components.servos.ultrasonic_servo_test import (
 from components.servos.camera_rotate_servo_test import (
     CameraRotateServoTest as camera_servo_test,
 )
-from components.servos.modules.camera_tilt_servo import CameraServo as tilt_camera_servo
+from components.servos.camera_tile_servo_test import (
+    CameraTiltServoTest as tilt_camera_servo_test,
+)
 
 ## Setting up logger
 LOG_LEVEL = logging.ERROR  # default log level
@@ -238,7 +240,7 @@ def servo(ultrasonic, camera, tilt, point, rotate, v):
         cmd = ultrasonic_servo_test()
     elif camera:
         if tilt:
-            cmd = tilt_camera_servo()
+            cmd = tilt_camera_servo_test()
         else:
             cmd = camera_servo_test()
     cmd_opts = servo_cmd_options(point=point, rotate=rotate, tilt=tilt)
