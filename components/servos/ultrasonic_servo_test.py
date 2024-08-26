@@ -10,6 +10,7 @@ servo_cmd_options = TypedDict(
     {
         "point": Optional[str],
         "rotate": Optional[str],
+        "tilt": Optional[str],
     },
 )
 

@@ -32,7 +32,10 @@ from components.servos.ultrasonic_servo_test import (
     servo_cmd_options,
 )
 
-from components.servos.camera_servo_test import CameraServoTest as camera_servo_test
+from components.servos.camera_rotate_servo_test import (
+    CameraRotateServoTest as camera_servo_test,
+)
+from components.servos.modules.camera_tilt_servo import CameraServo as tilt_camera_servo
 
 ## Setting up logger
 LOG_LEVEL = logging.ERROR  # default log level
@@ -219,15 +222,26 @@ def ultrasonic(v):
     ),
     help="Makes the Ultrasonic Sensor Servo rotate in the given direction",
 )
+@click.option(
+    "-tilt",
+    type=click.Choice(
+        ["center", "up", "down"],
+        case_sensitive=False,
+    ),
+    help="Makes the Ultrasonic Sensor Servo rotate in the given direction",
+)
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
-def servo(ultrasonic, camera, point, rotate, v):
+def servo(ultrasonic, camera, tilt, point, rotate, v):
     set_verbosity_level(v) if v else None
     log.info("Running Ultrasonic Sensor Servo test")
     if ultrasonic:
         cmd = ultrasonic_servo_test()
     elif camera:
-        cmd = camera_servo_test()
-    cmd_opts = servo_cmd_options(point=point, rotate=rotate)
+        if tilt:
+            cmd = tilt_camera_servo()
+        else:
+            cmd = camera_servo_test()
+    cmd_opts = servo_cmd_options(point=point, rotate=rotate, tilt=tilt)
     cmd.execute_command(cmd_opts=cmd_opts)
 
 

@@ -1,5 +1,5 @@
 from components.servos.modules.camera_rotate_servo import (
-    CameraServo as camera_servo,
+    CameraRotateServo as camera_servo,
 )
 import logging
 from typing import TypedDict, Optional
@@ -14,7 +14,7 @@ from typing import TypedDict, Optional
 # )
 
 
-class CameraServoTest:
+class CameraRotateServoTest:
     def __init__(self):
         self.servo = camera_servo()
         self.log = logging.getLogger("bumble")
