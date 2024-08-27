@@ -79,7 +79,6 @@ class InfraRedRecvr:
                     self.__recv_data()
                     if self.__verify_data():
                         data = self.data[2]
-                        self.data = [0, 0, 0, 0]  # reset the data
                         self.log.debug(f"Received data: {data}")
                         for command in button_key_codes:
                             if command == data:
@@ -106,6 +105,7 @@ class InfraRedRecvr:
     def __recv_data(self):
         index = 0  # variable to keep track of byte count
         bit_pos = 0  # position of the bit within a byte
+        self.data = [0, 0, 0, 0]  # reset the data
 
         for i in range(0, 32):  # Start receiving 32 bits of data
             # 4 bytes: 1. address, 2. address inverse, 3. command, 4. command inverse

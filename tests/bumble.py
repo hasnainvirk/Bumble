@@ -283,7 +283,6 @@ def remote(v):
     """
     set_verbosity_level(v) if v else None
     log.info("Running Remote Control test")
-    log.info("Remote Control test not implemented yet")
     cmd = remote_control_test()
     cmd.execute_command()
 
