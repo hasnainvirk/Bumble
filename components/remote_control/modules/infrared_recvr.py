@@ -78,9 +78,11 @@ class InfraRedRecvr:
                     self.__recv_preamble()
                     self.__recv_data()
                     if self.__verify_data():
-                        self.log.debug(f"Received data: {self.data[2]}")
+                        data = self.data[2]
+                        self.data = [0, 0, 0, 0]  # reset the data
+                        self.log.debug(f"Received data: {data}")
                         for command in button_key_codes:
-                            if command == self.data[2]:
+                            if command == data:
                                 button_ctrls[command]()  # calls the callable object
                                 break
         except KeyboardInterrupt:
