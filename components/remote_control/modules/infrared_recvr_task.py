@@ -115,7 +115,7 @@ class InfraredReceiver:
     def __recv_preamble(self):
         count = 0
         while (
-            GPIO.input(self.pin) == 0 and count < 200
+            GPIO.input(self.pin) == 0 and count < 160
         ):  # Wait for 9ms LOW level boot code and exit the loop if it exceeds 12ms
             count += 1
             time.sleep(SIXTY_MICROSECONDS_IN_SECONDS)
