@@ -358,3 +358,38 @@ $ bumble servo -camera -tilt open -vvv
 ## Infrared Receiver - Remote Control
 
 The IR chip uses NEC IR protocol. The controllign GPIO pin `GPIO_15=15` is connected to high voltage (3.3v) through an internal resistor, ensuring that the pin reads as high (1) when it is not connected to anything else.
+
+### NEC Protocol
+
+| Timing | Byte            | Pin Pull  |
+| ------ | --------------- | --------- |
+| 9ms    | Preamble        | Low       |
+| 4.5ms  | None            | High      |
+| 13.5ms | Address         | High, Low |
+| 13.5ms | Address Inverse | High, Low |
+| 13.5ms | Command         | High, Low |
+| 13.5ms | Command Inverse | High, Low |
+
+NEC protocol uses pulse distance encoding of the bits. The data is sent in the form of a series of pulses.
+Each pulse is a 562.5µs long 38kHz carrier burst.
+
+Signal will be high for 562.5µs and low for 562.5µs for a logical "0". It takes 1.125ms to transmit a 0.
+
+Signal will be high for 562.5µs and low for 1.6875ms for a logical "1". It takes 2.25ms to transmit a 1.
+
+### Testing Remote Control
+
+When pressed "2" on the remote control after executing the test sequence.
+
+```sh
+$ bumble remote -vvv
+ INFO     | Running Remote Control test
+ DEBUG    | Address Byte: 0
+ DEBUG    | Address Inverse Byte: 255
+ DEBUG    | Command Byte: 25
+ DEBUG    | Command Inverse Byte: 230
+ DEBUG    | Received data: 25
+ DEBUG    | calling button controller: two
+ INFO     | two
+
+```
