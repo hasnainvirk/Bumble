@@ -83,7 +83,9 @@ class InfraRedRecvr:
                         for command in button_key_codes:
                             if button_key_codes[command] == data:
                                 self.log.debug(f"calling button controller: {command}")
-                                button_ctrls[command]()  # calls the callable object
+                                button_ctrls[command][
+                                    "action"
+                                ]()  # calls the callable object
                                 break
         except KeyboardInterrupt:
             GPIO.cleanup()
