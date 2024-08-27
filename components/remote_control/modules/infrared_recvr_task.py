@@ -71,6 +71,7 @@ class InfraredReceiver:
         self.pin = GPIO_15
         self.data = [0, 0, 0, 0]
         self.ctrls = ctrls
+        self.lock = threading.Lock()
         self.__setup()
 
     def start(self):
@@ -90,7 +91,6 @@ class InfraredReceiver:
 
     def __run(self):
         # Set up an interrupt to detect the signal
-        self.__setup()
         try:
             GPIO.add_event_detect(
                 self.pin, GPIO.FALLING, callback=self.__handle_interrupt
@@ -100,6 +100,7 @@ class InfraredReceiver:
             GPIO.cleanup()
 
     def __handle_interrupt(self, channel):
+        self.lock.acquire()
         if GPIO.input(channel) == 0:
             self.__recv_preamble()
             self.__recv_data()
@@ -111,6 +112,7 @@ class InfraredReceiver:
                         self.log.debug(f"calling button controller: {command}")
                         self.ctrls[command]["action"]()  # calls the callable object
                         break
+        self.lock.release()
 
     def __recv_preamble(self):
         count = 0

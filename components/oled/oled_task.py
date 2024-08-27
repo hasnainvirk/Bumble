@@ -1,8 +1,6 @@
 import threading
 from components.oled.modules.oled import Oled, RESOURCES_FOLDER
 from PIL import ImageFont
-import RPi.GPIO as GPIO
-
 import subprocess
 import time
 import os
@@ -23,7 +21,6 @@ class OledDisplay(Oled):
     def shutdown(self):
         self.stop_flag.set()
         self.wipe()
-        # GPIO.cleanup()
         self.thread.join()
 
     def load_stats(self):
