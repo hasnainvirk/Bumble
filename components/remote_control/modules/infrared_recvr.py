@@ -82,6 +82,7 @@ class InfraRedRecvr:
                         self.log.debug(f"Received data: {data}")
                         for command in button_key_codes:
                             if command == data:
+                                self.log.debug(f"calling button controller: {command}")
                                 button_ctrls[command]()  # calls the callable object
                                 break
         except KeyboardInterrupt:
