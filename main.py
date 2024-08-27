@@ -3,6 +3,7 @@ from colorlog import ColoredFormatter
 from helpers.ir_helper import RemoteControlHelper as remote_control
 from components.oled.oled_task import OledDisplay as oled
 from components.led_panel.led_panel_task import LedPanelTask as led_panel
+from helpers.ultrasonic_helper import UltrasonicHelper as ultrasonic
 
 
 ## Setting up logger
@@ -14,11 +15,16 @@ def setup_logger(verbosity: int):
     logging.root.setLevel(log_level)
     formatter = ColoredFormatter(LOGFORMAT)
     stream = logging.StreamHandler()
+    file_h = logging.FileHandler("bumble.log")
     stream.setLevel(log_level)
+    file_h.setLevel(log_level)
     stream.setFormatter(formatter)
+    file_h.setFormatter(formatter)
     log = logging.getLogger("bumble")
-    log.setLevel(log_level)
     log.addHandler(stream)
+    log.addHandler(file_h)
+    log.setLevel(log_level)
+
     return log
 
 
@@ -39,6 +45,7 @@ log = setup_logger(args.verbose)
 ir = remote_control()
 oled = oled()
 led_panel = led_panel()
+ultrasonic = ultrasonic()
 
 
 def signal_handler(sig, frame):
@@ -60,6 +67,8 @@ if __name__ == "__main__":
     oled.start()
     # START LED PANEL
     led_panel.start()
+    # START ULTRASONIC
+    ultrasonic.avoid_obstacles()
 
     # wait for exit signal
     signal.pause()

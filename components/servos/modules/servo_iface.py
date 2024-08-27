@@ -31,9 +31,6 @@ class ServoIface:
         cycle_time_seconds = PWM_CYCLE_MILLSECONDS / 1000.0
         time.sleep(cycle_time_seconds - hold_time_seconds)  # The cycle of 20 ms
 
-    def cleanup(self):
-        GPIO.cleanup()
-
     def __setup(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.gpio_pin, GPIO.OUT)

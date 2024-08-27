@@ -29,9 +29,6 @@ class UltrasonicSensor:
         time.sleep(0.01)
         return measured_distance
 
-    def cleanup(self):
-        GPIO.cleanup()
-
     def __setup(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.__gpio_pins["trigger"], GPIO.OUT)

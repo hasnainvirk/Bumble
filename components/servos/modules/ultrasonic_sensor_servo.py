@@ -1,6 +1,5 @@
 from components.servos.modules.servo_iface import ServoIface
-import RPi.GPIO as GPIO
-import time, logging
+import logging
 
 GPIO_5 = 5
 POINTING_STRAIGHT_ANGLE = 90
@@ -65,6 +64,11 @@ class UltrasonicSensorServo(ServoIface):
             return
 
         self.__set_angle(i)
+
+    def rotate_to(self, angle):
+        self.log.debug(f"Ultrasonic Servo - Rotating to {angle}")
+        self.generate_pulse(angle=angle)
+        self.current_angle = angle
 
     def __set_angle(self, angle):
         self.current_angle = angle
