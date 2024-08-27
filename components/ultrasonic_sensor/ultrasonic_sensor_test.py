@@ -18,4 +18,3 @@ class UltrasonicSensorTest:
                 )
         except KeyboardInterrupt:
             self.log.debug("Measurement stopped by User")
-            self.__sensor.cleanup()

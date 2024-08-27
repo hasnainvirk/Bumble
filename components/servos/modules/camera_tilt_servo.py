@@ -1,6 +1,5 @@
 from components.servos.modules.servo_iface import ServoIface
-import RPi.GPIO as GPIO
-import time, logging
+import logging
 
 GPIO_6 = 6
 CLOSE_CAMERA_ANGLE = 0
