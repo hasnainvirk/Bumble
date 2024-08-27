@@ -291,15 +291,18 @@ Usage: bumble servo [OPTIONS]
 
 Options:
   -ultrasonic                   Selects Ultrasonic Sensor Servo
-  -point [straight|right|left]  Makes the Ultrasonic Sensor Servo point in the
-                                given direction
-  -rotate [center|right|left]   Makes the Ultrasonic Sensor Servo rotate in
-                                the given direction
+  -camera                       Selects Camera Servos
+  -point [straight|right|left]  Makes the Servo point in the given direction
+  -rotate [center|right|left]   Makes the Servo rotate in the given direction
+  -tilt [close|open]            Makes the camera servo open or shut the camera
+                                module
   -v                            Verbosity level default=error, v=info,
                                 vv=debug
   --help                        Show this message and exit.
 
 ```
+
+**NOTE** Use only `rotate` and `point` with `-ultrasonic` option. `-tilt` can be used with camera servo only
 
 For example pointing the base plate straight (90 degrees),
 
@@ -317,5 +320,41 @@ $ bumble servo -ultrasonic -rotate right -vvv
  DEBUG    | Ultrasonic Servo - Point straight
  DEBUG    | Ultrasonic Servo - Rotating Right
 
-
 ```
+
+## Servos for Camera
+
+There are two servos attached to Camera module.
+
+1. Base plate servo - helps the camera move from 0 to 180 degrees. This allows the camera to rotate from right to left.
+2. Camera tilt servo - helps the camera to tilt back down to close the module ot tilt back up to open it up.
+
+### Testing the camera servos
+
+```sh
+$ bumble servo -camera -rotate right -vvv
+ INFO     | Running Camera Servo test
+ DEBUG    | Camera Servo - Rotating Right
+```
+
+```sh
+$ bumble servo -camera -point straight -vvv
+ INFO     | Running Camera Servo test
+ DEBUG    | Camera Servo - Point straight
+```
+
+```sh
+$ bumble servo -camera -tilt close -vvv
+ INFO     | Running Camera Servo test
+ DEBUG    | Camera Servo - Closing Camera
+```
+
+```sh
+$ bumble servo -camera -tilt open -vvv
+ INFO     | Running Camera Servo test
+ DEBUG    | Camera Servo - Opening Camera
+```
+
+## Infrared Receiver - Remote Control
+
+The IR chip uses NEC IR protocol. The controllign GPIO pin `GPIO_15=15` is connected to high voltage (3.3v) through an internal resistor, ensuring that the pin reads as high (1) when it is not connected to anything else.

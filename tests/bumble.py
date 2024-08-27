@@ -39,6 +39,10 @@ from components.servos.camera_tile_servo_test import (
     CameraTiltServoTest as tilt_camera_servo_test,
 )
 
+from components.remote_control.remote_control_test import (
+    RemoteControlTest as remote_control_test,
+)
+
 ## Setting up logger
 LOG_LEVEL = logging.ERROR  # default log level
 LOGFORMAT = " %(log_color)s%(levelname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"
@@ -94,6 +98,9 @@ def cli():
 )
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
 def oled(text, image, emoji, stats, v):
+    """
+    OLED panel test
+    """
     set_verbosity_level(v) if v else None
     log.info("Running OLED test")
     cmd = oled_test()
@@ -120,6 +127,9 @@ def oled(text, image, emoji, stats, v):
 )
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
 def wheel(forward, backward, v):
+    """
+    Wheel test
+    """
     set_verbosity_level(v) if v else None
     log.info("Running Wheel test")
     cmd_opts = wheel_cmd_options(forward=forward, backward=backward)
@@ -150,6 +160,9 @@ def wheel(forward, backward, v):
 )
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
 def drive(forward, backward, left, right, v):
+    """
+    Drive System test
+    """
     set_verbosity_level(v) if v else None
     log.info("Running Drive System test")
     cmd = drive_test()
@@ -172,6 +185,9 @@ def drive(forward, backward, left, right, v):
 )
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
 def led(smile, bob, v):
+    """
+    LED Panel test
+    """
     set_verbosity_level(v) if v else None
     log.info("Running LED Panel test")
     cmd = led_test()
@@ -182,6 +198,9 @@ def led(smile, bob, v):
 @cli.command("lts")
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
 def lts(v):
+    """
+    Line Tracking Sensor test
+    """
     set_verbosity_level(v) if v else None
     log.info("Running Line Tracking Sensor test")
     cmd = line_tracking_sensor_test()
@@ -191,6 +210,9 @@ def lts(v):
 @cli.command("ultrasonic")
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
 def ultrasonic(v):
+    """
+    Ultrasonic Sensor test
+    """
     set_verbosity_level(v) if v else None
     log.info("Running Ultrasonic Sensor test")
     cmd = ultrasonic_sensor_test()
@@ -234,17 +256,36 @@ def ultrasonic(v):
 )
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
 def servo(ultrasonic, camera, tilt, point, rotate, v):
+    """
+    Servo test for ultrasonic sensor and camera.
+    """
     set_verbosity_level(v) if v else None
-    log.info("Running Ultrasonic Sensor Servo test")
-    if ultrasonic:
+    if ultrasonic and not tilt:
+        log.info("Running Ultrasonic Sensor Servo test")
         cmd = ultrasonic_servo_test()
     elif camera:
+        log.info("Running Camera Servo test")
         if tilt:
             cmd = tilt_camera_servo_test()
         else:
             cmd = camera_servo_test()
+    else:
+        raise ValueError("Invalid servo option selection")
     cmd_opts = servo_cmd_options(point=point, rotate=rotate, tilt=tilt)
     cmd.execute_command(cmd_opts=cmd_opts)
+
+
+@cli.command("remote")
+@click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
+def remote(v):
+    """
+    Remote control test
+    """
+    set_verbosity_level(v) if v else None
+    log.info("Running Remote Control test")
+    log.info("Remote Control test not implemented yet")
+    cmd = remote_control_test()
+    cmd.execute_command()
 
 
 def print_help_and_exit(command: click.command):
