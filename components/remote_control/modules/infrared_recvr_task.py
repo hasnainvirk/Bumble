@@ -106,10 +106,8 @@ class InfraredReceiver:
             self.__recv_data()
             if self.__verify_data():
                 data = self.data[2]
-                self.log.debug(f"Received data: {data}")
                 for command in button_key_codes:
                     if button_key_codes[command] == data:
-                        self.log.debug(f"calling button controller: {command}")
                         self.ctrls[command]["action"]()  # calls the callable object
                         break
         self.lock.release()
@@ -163,13 +161,13 @@ class InfraredReceiver:
     def __verify_data(self) -> bool:
         # Verify the data received
         if self.data[0] + self.data[1] == 0xFF and self.data[2] + self.data[3] == 0xFF:
-            self.log.debug(f"Address Byte: {self.data[0]}")
-            self.log.debug(f"Address Inverse Byte: {self.data[1]}")
-            self.log.debug(f"Command Byte: {self.data[2]}")
-            self.log.debug(f"Command Inverse Byte: {self.data[3]}")
+            # self.log.debug(f"Address Byte: {self.data[0]}")
+            # self.log.debug(f"Address Inverse Byte: {self.data[1]}")
+            # self.log.debug(f"Command Byte: {self.data[2]}")
+            # self.log.debug(f"Command Inverse Byte: {self.data[3]}")
             return True
         else:
-            self.log.error("Malformed data received from IR transmitter")
+            # self.log.error("Malformed data received from IR transmitter")
             return False
 
     def __setup(self):
