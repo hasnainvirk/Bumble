@@ -86,7 +86,6 @@ class InfraredReceiver:
     def shutdown(self):
         # remove the interrupt
         GPIO.remove_event_detect(self.pin)
-        GPIO.cleanup()
         self.thread.join()
 
     def __run(self):
@@ -116,7 +115,7 @@ class InfraredReceiver:
         count = 0
         while (
             GPIO.input(self.pin) == 0 and count < 160
-        ):  # Wait for 9ms LOW level boot code and exit the loop if it exceeds 12ms
+        ):  # Wait for 9ms LOW level boot code and exit the loop if it exceeds 9.6ms
             count += 1
             time.sleep(SIXTY_MICROSECONDS_IN_SECONDS)
 

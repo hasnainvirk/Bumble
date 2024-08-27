@@ -13,25 +13,28 @@ class LedPanel:
         self.__setup()
 
     def display(self, matrix_value):
-        self.__startup_sequence()
-        self.__send_data(0xC0)
-        for i in range(0, 16):
-            self.__send_data(matrix_value[i])
-        self.__end_sequence()
-        self.__startup_sequence()
-        self.__send_data(0x8A)
-        self.__end_sequence()
+        try:
+            self.__startup_sequence()
+            self.__send_data(0xC0)
+            for i in range(0, 16):
+                self.__send_data(matrix_value[i])
+            self.__end_sequence()
+            self.__startup_sequence()
+            self.__send_data(0x8A)
+            self.__end_sequence()
+        except Exception as e:
+            self.log.error(f"Error: {e}")
 
     def clear(self):
-        GPIO.output(self.__gpio_pins.get("SCLK"), GPIO.LOW)
-        self.__noop()
-        GPIO.output(self.__gpio_pins.get("DIO"), GPIO.LOW)
-        self.__noop()
-        GPIO.output(self.__gpio_pins.get("DIO"), GPIO.LOW)
-        self.__noop()
-
-    def cleanup(self):
-        GPIO.cleanup()
+        try:
+            GPIO.output(self.__gpio_pins.get("SCLK"), GPIO.LOW)
+            self.__noop()
+            GPIO.output(self.__gpio_pins.get("DIO"), GPIO.LOW)
+            self.__noop()
+            GPIO.output(self.__gpio_pins.get("DIO"), GPIO.LOW)
+            self.__noop()
+        except Exception as e:
+            self.log.error(f"Error: {e}")
 
     def __setup(self):
         GPIO.setmode(GPIO.BCM)

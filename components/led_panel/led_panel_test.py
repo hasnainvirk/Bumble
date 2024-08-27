@@ -1,5 +1,4 @@
 from components.led_panel.modules.shapes import (
-    bob_face,
     bob_eyes_shut,
     bob_eyes_open,
     smile,
@@ -23,7 +22,6 @@ led_cmd_options = TypedDict(
 
 class LedPanelTest(object):
     def __init__(self):
-        self.__bob_face = bob_face
         self.__bob_eyes_open = bob_eyes_open
         self.__bob_eyes_shut = bob_eyes_shut
         self.__smile = smile
@@ -55,5 +53,4 @@ class LedPanelTest(object):
                     time.sleep(1)
         except KeyboardInterrupt:
             self.__panel.clear()
-            self.__panel.cleanup()
             self.log.info("Exiting Led Panel Test")
