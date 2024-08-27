@@ -1,6 +1,7 @@
 import sys, logging, signal, argparse
 from colorlog import ColoredFormatter
 from helpers.ir_helper import RemoteControlHelper as remote_control
+from components.oled.oled_task import OledDisplay as oled
 
 
 ## Setting up logger
@@ -35,11 +36,13 @@ args = parser.parse_args()
 log = setup_logger(args.verbose)
 
 ir = remote_control()
+oled = oled()
 
 
 def signal_handler(sig, frame):
     log.info("Exit signal received. Exiting...")
     ir.shutdown()
+    oled.shutdown()
     sys.exit(0)
 
 
@@ -50,6 +53,8 @@ signal.signal(signal.SIGINT, signal_handler)
 if __name__ == "__main__":
     # START REMOTE CONTROL
     ir.start()
+    # START OLED
+    oled.start()
 
     # wait for exit signal
     signal.pause()
