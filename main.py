@@ -1,9 +1,11 @@
 import sys, logging, signal, argparse
+import queue
 from colorlog import ColoredFormatter
 from helpers.ir_helper import RemoteControlHelper as remote_control
 from components.oled.oled_task import OledDisplay as oled
 from components.led_panel.led_panel_task import LedPanelTask as led_panel
-from helpers.ultrasonic_helper import UltrasonicHelper as ultrasonic
+from helpers.kb_controller import KeyboardDriveControl as kb_controller
+import RPi.GPIO as GPIO
 
 
 ## Setting up logger
@@ -42,10 +44,13 @@ args = parser.parse_args()
 # Setting up logger
 log = setup_logger(args.verbose)
 
+# setup queue
+event_queue = queue.Queue()
+
 ir = remote_control()
 oled = oled()
 led_panel = led_panel()
-ultrasonic = ultrasonic()
+kb_controller = kb_controller()
 
 
 def signal_handler(sig, frame):
@@ -53,6 +58,10 @@ def signal_handler(sig, frame):
     ir.shutdown()
     oled.shutdown()
     led_panel.shutdown()
+    kb_controller.shutdown()
+
+    GPIO.cleanup()
+
     sys.exit(0)
 
 
@@ -67,8 +76,8 @@ if __name__ == "__main__":
     oled.start()
     # START LED PANEL
     led_panel.start()
-    # START ULTRASONIC
-    ultrasonic.avoid_obstacles()
+    # START KEYBOARD CONTROLLER
+    kb_controller.start()
 
     # wait for exit signal
     signal.pause()

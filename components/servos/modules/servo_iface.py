@@ -35,3 +35,6 @@ class ServoIface:
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.gpio_pin, GPIO.OUT)
         GPIO.setwarnings(False)
+
+    def cleanup(self):
+        GPIO.cleanup(self.gpio_pin)

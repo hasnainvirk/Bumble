@@ -1,5 +1,6 @@
 import redis
 import logging
+import threading
 from components.ultrasonic_sensor.modules.ultrasonic_sensor import (
     UltrasonicSensor as ultrasonic_sensor,
 )
@@ -46,3 +47,16 @@ class UltrasonicHelper:
         self.log.debug(f"Optimal Angle: {optimal_angle}")
         self.log.debug(f"Distance: {scan_data[optimal_angle]}")
         self.servo.rotate_to(optimal_angle)
+
+    def decide_direction(self):
+        self.servo.point_right()
+        dist_right = self.get_distance()
+        self.servo.point_left()
+        dist_left = self.get_distance()
+        self.servo.point_straight()
+        dist_straight = self.get_distance()
+        return {"right": dist_right, "left": dist_left, "straight": dist_straight}
+
+    def cleanup(self):
+        self.sensor.cleanup()
+        self.servo.cleanup()

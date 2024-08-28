@@ -1,5 +1,7 @@
 import socket
-import keyboard
+
+# import keyboard
+import kb_key_hit
 
 
 class UDPClient:
@@ -18,27 +20,49 @@ class UDPClient:
             print(f"Error: {e}")
 
 
+kb = kb_key_hit.KBHit()
+
+
 def main():
     server_dns = "bumble.local"  # Replace with your Raspberry Pi's DNS address
     server_port = 5555
     client = UDPClient(server_dns, server_port)
 
     print("Press arrow keys to control the car. Press 'Esc' to exit.")
-    while True:
-        try:
-            if keyboard.is_pressed("up"):
-                client.send_command("UP")
-            elif keyboard.is_pressed("down"):
-                client.send_command("DOWN")
-            elif keyboard.is_pressed("left"):
-                client.send_command("LEFT")
-            elif keyboard.is_pressed("right"):
-                client.send_command("RIGHT")
-            elif keyboard.is_pressed("esc"):
-                print("Exiting...")
-                break
-        except Exception as e:
-            print(f"Error: {e}")
+
+    try:
+        while True:
+            if kb.kbhit():
+                c = kb.getarrow()
+                print(c)
+                if c == 0:  # up
+                    client.send_command("UP")
+                elif c == 1:  # right
+                    client.send_command("RIGHT")
+                elif c == 2:  # down
+                    client.send_command("DOWN")
+                elif c == 3:  # left
+                    client.send_command("LEFT")
+                print(c)
+    except KeyboardInterrupt as e:
+        print(e)
+        kb.set_normal_term()
+
+    # while True:
+    #     try:
+    #         if keyboard.is_pressed("up"):
+    #             client.send_command("UP")
+    #         elif keyboard.is_pressed("down"):
+    #             client.send_command("DOWN")
+    #         elif keyboard.is_pressed("left"):
+    #             client.send_command("LEFT")
+    #         elif keyboard.is_pressed("right"):
+    #             client.send_command("RIGHT")
+    #         elif keyboard.is_pressed("esc"):
+    #             print("Exiting...")
+    #             break
+    #     except Exception as e:
+    #         print(f"Error: {e}")
 
 
 if __name__ == "__main__":

@@ -86,6 +86,7 @@ class InfraredReceiver:
     def shutdown(self):
         # remove the interrupt
         GPIO.remove_event_detect(self.pin)
+        # GPIO.cleanup(self.pin)
         self.thread.join()
 
     def __run(self):
@@ -96,7 +97,7 @@ class InfraredReceiver:
             )
         except RuntimeError as e:
             self.log.error(f"Failed to add edge detection: {e}")
-            GPIO.cleanup()
+            GPIO.cleanup(self.pin)
 
     def __handle_interrupt(self, channel):
         self.lock.acquire()

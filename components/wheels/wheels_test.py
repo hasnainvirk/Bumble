@@ -45,7 +45,7 @@ class WheelsTest(object):
         self.wheel = self.__ctrl.get(wheel_name)
         if not self.wheel:
             raise ValueError(f"Invalid wheel name: {wheel_name}")
-
+        self.wheel.set_speed(100)
         while True:
             time.sleep(0.01)
             try:
