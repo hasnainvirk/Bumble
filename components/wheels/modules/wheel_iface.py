@@ -31,11 +31,11 @@ class WheelIface(metaclass=abc.ABCMeta):
         )
 
     @abc.abstractmethod
-    def move_forward(self):
+    def move_forward(self, duration=None):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def move_backwards(self):
+    def move_backwards(self, duration=None):
         raise NotImplementedError
 
     @abc.abstractmethod
