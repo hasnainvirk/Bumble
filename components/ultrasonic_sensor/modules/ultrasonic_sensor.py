@@ -23,11 +23,16 @@ class UltrasonicSensor:
             pass
         t2 = time.time()
         measured_distance = ((t2 - t1) * 340 / 2) * 100
-        self.log.debug(
-            "Measured Distance @ Sensor = {:.2f} cm".format(measured_distance)
-        )  # {:.2f},Keep two decimal places
         time.sleep(0.01)
         return measured_distance
+
+    def cleanup(self):
+        GPIO.cleanup(
+            [
+                self.__gpio_pins["trigger"],
+                self.__gpio_pins["echo"],
+            ]
+        )
 
     def __setup(self):
         GPIO.setmode(GPIO.BCM)

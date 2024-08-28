@@ -29,7 +29,13 @@ class LineTrackingSensor:
         return self.__get_decision()
 
     def cleanup(self):
-        GPIO.cleanup()
+        GPIO.cleanup(
+            channel=[
+                self.__gpio_pins["GPIO_17"],
+                self.__gpio_pins["GPIO_18"],
+                self.__gpio_pins["GPIO_19"],
+            ]
+        )
 
     def __get_decision(self) -> line_ctrl:
         right = GPIO.input(self.__gpio_pins["GPIO_17"])

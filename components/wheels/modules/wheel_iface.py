@@ -15,6 +15,28 @@ DIRECTION_LEFT = "left"
 DIRECTION_RIGHT = "right"
 DIRECTION_NONE = "none"
 
+wheel_msg_action = TypedDict(
+    "wheel_msg_action",
+    {
+        "direction": str,
+        "speed": int,
+        "name": Optional[str],
+        "slow_down": bool,
+        "delay": Optional[float],
+        "step": Optional[int],
+    },
+)
+
+wheel_message = TypedDict(
+    "wheel_message",
+    {
+        UPPER_LEFT_WHEEL: wheel_msg_action,
+        LOWER_LEFT_WHEEL: wheel_msg_action,
+        UPPER_RIGHT_WHEEL: wheel_msg_action,
+        LOWER_RIGHT_WHEEL: wheel_msg_action,
+    },
+)
+
 
 class WheelIface(metaclass=abc.ABCMeta):
     """
@@ -31,11 +53,11 @@ class WheelIface(metaclass=abc.ABCMeta):
         )
 
     @abc.abstractmethod
-    def move_forward(self, duration=None):
+    def move_forward(self):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def move_backwards(self, duration=None):
+    def move_backwards(self):
         raise NotImplementedError
 
     @abc.abstractmethod
