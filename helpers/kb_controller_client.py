@@ -1,0 +1,45 @@
+import socket
+import keyboard
+
+
+class UDPClient:
+    def __init__(self, server_dns, server_port):
+        self.server_ip = socket.gethostbyname(server_dns)
+        self.server_port = server_port
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+    def send_command(self, command):
+        try:
+            self.sock.sendto(
+                command.encode("utf-8"), (self.server_ip, self.server_port)
+            )
+            print(f"Sent command: {command}")
+        except Exception as e:
+            print(f"Error: {e}")
+
+
+def main():
+    server_dns = "bumble.local"  # Replace with your Raspberry Pi's DNS address
+    server_port = 5555
+    client = UDPClient(server_dns, server_port)
+
+    print("Press arrow keys to control the car. Press 'Esc' to exit.")
+    while True:
+        try:
+            if keyboard.is_pressed("up"):
+                client.send_command("UP")
+            elif keyboard.is_pressed("down"):
+                client.send_command("DOWN")
+            elif keyboard.is_pressed("left"):
+                client.send_command("LEFT")
+            elif keyboard.is_pressed("right"):
+                client.send_command("RIGHT")
+            elif keyboard.is_pressed("esc"):
+                print("Exiting...")
+                break
+        except Exception as e:
+            print(f"Error: {e}")
+
+
+if __name__ == "__main__":
+    main()

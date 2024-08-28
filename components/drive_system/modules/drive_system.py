@@ -31,8 +31,8 @@ class DriveSystem:
         ]
         self.wheel: WheelIface = None
 
-    def drive_forward(self):
-        self.__drive(DIRECTION_FORWARD)
+    def drive_forward(self, duration=None):
+        self.__drive(DIRECTION_FORWARD, duration)
 
     def drive_backward(self):
         self.__drive(DIRECTION_BACKWARD)
@@ -42,22 +42,22 @@ class DriveSystem:
             self.wheel = self.__ctrl.get(wheel)
             self.wheel.stop()
 
-    def turn_left(self):
-        self.__ctrl.get(UPPER_LEFT_WHEEL).move_backwards()
-        self.__ctrl.get(LOWER_LEFT_WHEEL).move_backwards()
-        self.__ctrl.get(UPPER_RIGHT_WHEEL).move_forward()
-        self.__ctrl.get(LOWER_RIGHT_WHEEL).move_forward()
+    def turn_left(self, duration=None):
+        self.__ctrl.get(UPPER_LEFT_WHEEL).move_backwards(duration=duration)
+        self.__ctrl.get(LOWER_LEFT_WHEEL).move_backwards(duration=duration)
+        self.__ctrl.get(UPPER_RIGHT_WHEEL).move_forward(duration=duration)
+        self.__ctrl.get(LOWER_RIGHT_WHEEL).move_forward(duration=duration)
 
-    def turn_right(self):
-        self.__ctrl.get(UPPER_LEFT_WHEEL).move_forward()
-        self.__ctrl.get(LOWER_LEFT_WHEEL).move_forward()
-        self.__ctrl.get(UPPER_RIGHT_WHEEL).move_backwards()
-        self.__ctrl.get(LOWER_RIGHT_WHEEL).move_backwards()
+    def turn_right(self, duration=None):
+        self.__ctrl.get(UPPER_LEFT_WHEEL).move_forward(duration=duration)
+        self.__ctrl.get(LOWER_LEFT_WHEEL).move_forward(duration=duration)
+        self.__ctrl.get(UPPER_RIGHT_WHEEL).move_backwards(duration=duration)
+        self.__ctrl.get(LOWER_RIGHT_WHEEL).move_backwards(duration=duration)
 
-    def __drive(self, direction: str):
+    def __drive(self, direction: str, duration=None):
         for wheel in self.__wheels:
             self.wheel = self.__ctrl.get(wheel)
             if direction == DIRECTION_FORWARD:
-                self.wheel.move_forward()
+                self.wheel.move_forward(duration=duration)
             elif direction == DIRECTION_BACKWARD:
-                self.wheel.move_backwards()
+                self.wheel.move_backwards(duration=duration)

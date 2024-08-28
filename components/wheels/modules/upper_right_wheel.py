@@ -1,4 +1,5 @@
 import RPi.GPIO as GPIO
+import time
 from components.wheels.modules.wheel_iface import (
     WheelIface,
     UPPER_RIGHT_WHEEL,
@@ -26,15 +27,21 @@ class UpperRightWheel(WheelIface):
     def get_name(self):
         return self.__name
 
-    def move_forward(self):
+    def move_forward(self, duration=None):
         GPIO.output(self.__gpio_pins.get("GPIO_24"), GPIO.HIGH)  # Upper Right forward
         GPIO.output(self.__gpio_pins.get("GPIO_25"), GPIO.LOW)
         self.__set_duty_cycle(80)
+        if duration:
+            time.sleep(duration)
+            self.stop()
 
-    def move_backwards(self):
+    def move_backwards(self, duration=None):
         GPIO.output(self.__gpio_pins.get("GPIO_24"), GPIO.LOW)  # Upper Left backwards
         GPIO.output(self.__gpio_pins.get("GPIO_25"), GPIO.HIGH)
         self.__set_duty_cycle(80)
+        if duration:
+            time.sleep(duration)
+            self.stop()
 
     def stop(self):
         self.__set_duty_cycle(0)
