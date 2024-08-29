@@ -1,30 +1,13 @@
-import socket
-from helpers.kb_key_controller import KeyboardKeyController as kb_key_controller
-
-
-class UDPClient:
-    def __init__(self, server_dns, server_port):
-        self.server_ip = socket.gethostbyname(server_dns)
-        self.server_port = server_port
-        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
-    def send_command(self, command):
-        try:
-            self.sock.sendto(
-                command.encode("utf-8"), (self.server_ip, self.server_port)
-            )
-            print(f"Sent command: {command}")
-        except Exception as e:
-            print(f"Error: {e}")
-
+from kb_key_controller import KeyboardKeyController as kb_key_controller
+from udp_controller_client import UDPClient as udp_controller_client
 
 kb = kb_key_controller()
 
 
 def main():
-    server_dns = "bumble.local"  # Replace with your Raspberry Pi's DNS address
+    server_dns = "bumble.local"
     server_port = 5555
-    client = UDPClient(server_dns, server_port)
+    client = udp_controller_client(server_dns, server_port)
 
     print("Press arrow keys to control the car. Press 'Esc' to exit.")
 

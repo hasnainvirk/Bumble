@@ -78,6 +78,10 @@ class DriveSystem:
         for thread in self.__threads:
             thread.join()
 
+        for wheel in self.__wheels:
+            if hasattr(self.__ctrl.get(wheel), "cleanup"):
+                self.__ctrl.get(wheel).cleanup()
+
     def post_message(
         self,
         direction: str,

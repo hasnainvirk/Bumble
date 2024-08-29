@@ -15,7 +15,9 @@ class CameraRotateServoTest:
         elif cmd_opts.get("rotate"):
             self.__handle_rotate(cmd_opts["rotate"])
         else:
-            raise ValueError("Invalid command options")
+            self.log.error("Invalid command options")
+
+        self.servo.cleanup()
 
     def __handle_point(self, point: str):
         if point == "straight":
@@ -25,7 +27,7 @@ class CameraRotateServoTest:
         elif point == "left":
             self.servo.point_left()
         else:
-            raise ValueError("Invalid point direction")
+            self.log.error("Invalid command options")
 
     def __handle_rotate(self, rotate: str):
         if rotate == "center":
@@ -35,4 +37,4 @@ class CameraRotateServoTest:
         elif rotate == "left":
             self.servo.rotate_left()
         else:
-            raise ValueError("Invalid rotate direction")
+            self.log.error("Invalid command options")

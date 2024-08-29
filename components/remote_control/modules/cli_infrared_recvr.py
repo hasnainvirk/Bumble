@@ -15,14 +15,13 @@ class CliInfrared(InfraredRecvrBase):
     def __init__(self):
         self.log = logging.getLogger("bumble")
         self.pin = GPIO_15
-        self.data = [0, 0, 0, 0]
-        super().__init__(self.pin, self.data)
+        super().__init__(self.pin)
 
     def listen_and_process(self, button_ctrls: button_ctrls):
         try:
             while True:
                 if GPIO.input(self.pin) == 0:
-                    self.recv_preamble()
+                    # self.recv_preamble()
                     self.recv_data()
                     if self.verify_data():
                         data = self.data[2]
@@ -35,4 +34,4 @@ class CliInfrared(InfraredRecvrBase):
                                 ]()  # calls the callable object
                                 break
         except KeyboardInterrupt:
-            GPIO.cleanup()
+            self.cleanup()

@@ -17,9 +17,10 @@ class CameraRotateServo(ServoIface):
     def point_straight(self):
         self.log.debug("Camera Servo - Point straight")
         # try many times to make sure the servo is at pointing straight at 90 degrees
-        for _ in range(0, 50):
-            self.generate_pulse(POINTING_STRAIGHT_ANGLE)
-        self.__set_angle(POINTING_STRAIGHT_ANGLE)
+        self.generate_pulse(POINTING_STRAIGHT_ANGLE)
+        # for _ in range(0, 50):
+        #     self.generate_pulse(POINTING_STRAIGHT_ANGLE)
+        # self.__set_angle(POINTING_STRAIGHT_ANGLE)
 
     def point_right(self):
         self.log.debug("Camera Servo - Point Right")
@@ -47,6 +48,22 @@ class CameraRotateServo(ServoIface):
         while i <= POINTING_LEFT_ANGLE:
             self.generate_pulse(i)
             i += 1
+        self.__set_angle(i)
+
+    def rotate_to_angle(self, angle: int):
+        self.log.debug(f"Camera Servo - Rotating to {angle} degrees")
+        i = self.current_angle
+        if i > angle:
+            while i >= angle:
+                self.generate_pulse(i)
+                i -= 1
+        elif i < angle:
+            while i <= angle:
+                self.generate_pulse(i)
+                i += 1
+        elif i == angle:
+            return
+
         self.__set_angle(i)
 
     def rotate_center(self):

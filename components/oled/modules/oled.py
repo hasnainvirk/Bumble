@@ -5,6 +5,7 @@ from board import SCL, SDA
 import busio
 from PIL import Image, ImageDraw, ImageFont
 import logging
+import RPi.GPIO as GPIO
 
 
 # Dimensions for OLED display
@@ -67,6 +68,11 @@ class Oled:
             os.path.dirname(__file__), RESOURCES_FOLDER, "VCR_OSD_MONO_1.001.ttf"
         )
         self.font = ImageFont.truetype(font_path, 15)
+
+    def cleanup(self):
+        self.disp.poweroff()
+        self.log.critical("Shutting down OLED")
+        self.i2c.deinit()
 
     def create_text_areas(self):
         self.area1 = TextArea(0, 0, 127, 15)

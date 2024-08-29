@@ -52,4 +52,5 @@ class LedPanelTest(object):
                     time.sleep(1)
         except KeyboardInterrupt:
             self.__panel.clear()
+            self.__panel.cleanup()
             self.log.info("Exiting Led Panel Test")

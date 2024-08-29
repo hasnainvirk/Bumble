@@ -1,5 +1,5 @@
 import RPi.GPIO as GPIO
-import time
+import time, logging, threading
 
 SIXTY_MICROSECONDS_IN_SECONDS = 0.00006  # apptoximately
 
@@ -18,12 +18,13 @@ Signal will be high for 562.5µs and low for 1.6875ms for a logical "1".
 
 
 class InfraredRecvrBase:
-    def __init__(self, pin, data):
+    def __init__(self, pin):
         self.pin = pin
-        self.data = data
+        self.data = [0, 0, 0, 0]
+        self.log = logging.getLogger("bumble")
         self.__setup()
 
-    def recv_preamble(self):
+    def recv_data(self):
         count = 0
         while (
             GPIO.input(self.pin) == 0 and count < 160
@@ -38,7 +39,6 @@ class InfraredRecvrBase:
             count += 1
             time.sleep(SIXTY_MICROSECONDS_IN_SECONDS)
 
-    def recv_data(self):
         index = 0  # variable to keep track of byte count
         bit_pos = 0  # position of the bit within a byte
         self.data = [0, 0, 0, 0]  # reset the data
@@ -69,19 +69,32 @@ class InfraredRecvrBase:
             else:
                 bit_pos += 1  # otherwise, move to next bit
 
+    # def recv_data(self):
+
     def verify_data(self) -> bool:
         # Verify the data received
         if self.data[0] + self.data[1] == 0xFF and self.data[2] + self.data[3] == 0xFF:
-            # self.log.debug(f"Address Byte: {self.data[0]}")
-            # self.log.debug(f"Address Inverse Byte: {self.data[1]}")
-            # self.log.debug(f"Command Byte: {self.data[2]}")
-            # self.log.debug(f"Command Inverse Byte: {self.data[3]}")
+            self.log.debug(f"Address Byte: {self.data[0]}")
+            self.log.debug(f"Address Inverse Byte: {self.data[1]}")
+            self.log.debug(f"Command Byte: {self.data[2]}")
+            self.log.debug(f"Command Inverse Byte: {self.data[3]}")
             return True
         else:
-            # self.log.error("Malformed data received from IR transmitter")
+            self.log.error("Malformed data received from IR transmitter")
+            self.log.debug(f"Address Byte: {self.data[0]}")
+            self.log.debug(f"Address Inverse Byte: {self.data[1]}")
+            self.log.debug(f"Command Byte: {self.data[2]}")
+            self.log.debug(f"Command Inverse Byte: {self.data[3]}")
             return False
 
+    def cleanup(self):
+        GPIO.cleanup(self.pin)
+
     def __setup(self):
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.pin, GPIO.IN, GPIO.PUD_UP)
-        time.sleep(0.1)  # Add a small delay to ensure setup is complete
+        try:
+            GPIO.setmode(GPIO.BCM)
+            GPIO.setup(self.pin, GPIO.IN, GPIO.PUD_UP)
+            time.sleep(0.1)  # Add a small delay to ensure setup is complete
+        except Exception as e:
+            self.log.error(f"Error setting up GPIO: {e}")
+            self.cleanup()

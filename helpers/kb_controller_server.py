@@ -4,7 +4,7 @@ import logging
 from components.drive_system.modules.drive_system import DriveSystem as drive_system
 
 
-class KeyboardDriveControl:
+class KeyboardControllerServer:
 
     def __init__(self, host="0.0.0.0", port=5555) -> None:
         self.host = host
@@ -13,13 +13,13 @@ class KeyboardDriveControl:
         self.sock.settimeout(1)
         self.sock.bind((self.host, self.port))
         self.log = logging.getLogger("bumble")
-        self.car_controller = drive_system(speed=30, embedded_ultrasonic_sensor=True)
+        self.car_controller = drive_system(speed=30)
         self.stop_flag = threading.Event()
 
     def start(self):
         self.car_controller.start()
         self.thread = threading.Thread(
-            target=self.__worker, name="Keyboard Controller Server", daemon=False
+            target=self.__worker, name="UDP Controller Server", daemon=False
         )
         self.thread.start()
 

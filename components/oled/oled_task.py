@@ -22,6 +22,7 @@ class OledDisplay(Oled):
         self.stop_flag.set()
         self.wipe()
         self.thread.join()
+        self.cleanup()
 
     def load_stats(self):
         # First define some constants to allow easy resizing of shapes.

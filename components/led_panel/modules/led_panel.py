@@ -36,6 +36,14 @@ class LedPanel:
         except Exception as e:
             self.log.error(f"Error: {e}")
 
+    def cleanup(self):
+        GPIO.cleanup(
+            [
+                self.__gpio_pins.get("SCLK"),
+                self.__gpio_pins.get("DIO"),
+            ]
+        )
+
     def __setup(self):
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.__gpio_pins.get("SCLK"), GPIO.OUT)
