@@ -2,16 +2,6 @@ from components.servos.modules.camera_rotate_servo import (
     CameraRotateServo as camera_servo,
 )
 import logging
-from typing import TypedDict, Optional
-
-
-# servo_cmd_options = TypedDict(
-#     "servo_cmd_options",
-#     {
-#         "point": Optional[str],
-#         "rotate": Optional[str],
-#     },
-# )
 
 
 class CameraRotateServoTest:

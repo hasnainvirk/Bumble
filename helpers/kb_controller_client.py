@@ -1,7 +1,5 @@
 import socket
-
-# import keyboard
-import kb_key_hit
+from helpers.kb_key_controller import KeyboardKeyController as kb_key_controller
 
 
 class UDPClient:
@@ -20,7 +18,7 @@ class UDPClient:
             print(f"Error: {e}")
 
 
-kb = kb_key_hit.KBHit()
+kb = kb_key_controller()
 
 
 def main():
@@ -32,9 +30,8 @@ def main():
 
     try:
         while True:
-            if kb.kbhit():
-                c = kb.getarrow()
-                print(c)
+            if kb.block_until_key_pressed():
+                c = kb.get_command()
                 if c == 0:  # up
                     client.send_command("UP")
                 elif c == 1:  # right
@@ -45,7 +42,6 @@ def main():
                     client.send_command("LEFT")
                 elif c == 4:  # space bar
                     client.send_command("STOP")
-                print(c)
     except KeyboardInterrupt as e:
         print(e)
         kb.set_normal_term()

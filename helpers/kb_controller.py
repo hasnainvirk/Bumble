@@ -19,7 +19,7 @@ class KeyboardDriveControl:
     def start(self):
         self.car_controller.start()
         self.thread = threading.Thread(
-            target=self.__run, name="Keyboard Controller Server", daemon=False
+            target=self.__worker, name="Keyboard Controller Server", daemon=False
         )
         self.thread.start()
 
@@ -54,7 +54,7 @@ class KeyboardDriveControl:
         else:
             self.log.error(f"Invalid command: {command}")
 
-    def __run(self):
+    def __worker(self):
         self.log.info(
             f"Keyboard Controller Server Listening on {self.host}:{self.port}"
         )
