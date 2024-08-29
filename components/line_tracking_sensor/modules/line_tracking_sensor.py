@@ -30,7 +30,7 @@ class LineTrackingSensor:
 
     def cleanup(self):
         GPIO.cleanup(
-            channel=[
+            [
                 self.__gpio_pins["GPIO_17"],
                 self.__gpio_pins["GPIO_18"],
                 self.__gpio_pins["GPIO_19"],
