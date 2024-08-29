@@ -57,10 +57,17 @@ class KBHit:
         3 : left
         Should not be called in the same program as getch().
         """
-        c = sys.stdin.read(3)[2]
-        vals = [65, 67, 66, 68]
-
-        return vals.index(ord(c.encode("utf-8")))
+        c = sys.stdin.read(1)
+        if c == " ":
+            return 4  # space bar
+        elif c == "\x1b":
+            # c = sys.stdin.read(3)[2]
+            c = sys.stdin.read(2)
+            if c[0] == "[":
+                vals = [65, 67, 66, 68]
+                return vals.index(ord(c[1]))
+                # return vals.index(ord(c.encode("utf-8")))
+        return None
 
     def kbhit(self):
         """Returns True if keyboard character was hit, False otherwise."""
