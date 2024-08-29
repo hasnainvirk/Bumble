@@ -2,7 +2,6 @@ from components.servos.modules.camera_tilt_servo import (
     CameraTiltServo as camera_tilt_servo,
 )
 import logging
-from typing import TypedDict, Optional
 
 
 class CameraTiltServoTest:

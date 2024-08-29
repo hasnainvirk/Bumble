@@ -46,7 +46,6 @@ class OledDisplay(Oled):
             )
 
             try:
-                # Shell scripts for system monitoring from here : https://unix.stackexchange.com/questions/119126/command-to-display-memory-usage-disk-usage-and-cpu-load
                 cmd = "hostname -I | cut -d' ' -f1"
                 ip = subprocess.check_output(cmd, shell=True).decode("utf-8").strip()
             except subprocess.CalledProcessError as e:
