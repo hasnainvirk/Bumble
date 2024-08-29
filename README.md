@@ -393,3 +393,26 @@ $ bumble remote -vvv
  INFO     | two
 
 ```
+
+## Manually Driving the Robot with Collision Avoidance
+
+You can control the robot with Arrow Keys and Space Bar.
+
+- Arrow Keys -> Direction
+- Space Bar -> Brake
+
+## Setup on Raspberry PI
+
+1. Install dependencies.
+2. Start the manual drive program:
+   ```sh
+   $ python main.py -vvvv
+   ```
+
+## Setup on a different machine
+
+1. Install dependecies
+2. Start the client program
+   ```sh
+   $ python ~/Bumble/helpers/kb_controller_client.py
+   ```
