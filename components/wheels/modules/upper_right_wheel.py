@@ -70,6 +70,17 @@ class UpperRightWheel(WheelIface):
 
         self.log.debug(f"Wheel {self.__name} processed message: {action}")
 
+    def cleanup(self):
+        self.__set_duty_cycle(0)
+        self.__pwm.stop()
+        GPIO.cleanup(
+            [
+                self.__gpio_pins.get("GPIO_12"),
+                self.__gpio_pins.get("GPIO_24"),
+                self.__gpio_pins.get("GPIO_25"),
+            ]
+        )
+
     def __get_wheel_ready(self):
         GPIO.setmode(GPIO.BCM)
         # set the MOTOR Driver Pin OUTPUT mode

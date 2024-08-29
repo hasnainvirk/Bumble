@@ -39,3 +39,4 @@ class DriveSystemTest(object):
                 break
 
         self.__drive_system.stop()
+        self.__drive_system.cleanup()

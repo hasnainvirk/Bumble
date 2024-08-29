@@ -43,17 +43,37 @@ from components.remote_control.remote_control_test import (
     RemoteControlTest as remote_control_test,
 )
 
-## Setting up logger
+from tests.programs.manual_drive import (
+    ManualDrive as manual_drive,
+    manual_drive_cmd_options,
+)
+
+# ## Setting up logger
+# LOG_LEVEL = logging.ERROR  # default log level
+# LOGFORMAT = " %(log_color)s%(levelname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"
+# logging.root.setLevel(LOG_LEVEL)
+# formatter = ColoredFormatter(LOGFORMAT)
+# stream = logging.StreamHandler()
+# stream.setLevel(LOG_LEVEL)
+# stream.setFormatter(formatter)
+# log = logging.getLogger("bumble")
+# log.setLevel(LOG_LEVEL)
+# log.addHandler(stream)
+
 LOG_LEVEL = logging.ERROR  # default log level
-LOGFORMAT = " %(log_color)s%(levelname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"
+LOGFORMAT = " %(log_color)s%(levelname)-8s%(reset)s | %(filename)s | %(log_color)s%(message)s%(reset)s"
 logging.root.setLevel(LOG_LEVEL)
 formatter = ColoredFormatter(LOGFORMAT)
 stream = logging.StreamHandler()
+file_h = logging.FileHandler("bumble.log")
 stream.setLevel(LOG_LEVEL)
+file_h.setLevel(LOG_LEVEL)
 stream.setFormatter(formatter)
+file_h.setFormatter(formatter)
 log = logging.getLogger("bumble")
-log.setLevel(LOG_LEVEL)
 log.addHandler(stream)
+log.addHandler(file_h)
+log.setLevel(LOG_LEVEL)
 
 
 def set_verbosity_level(verbosity: int):
@@ -63,12 +83,13 @@ def set_verbosity_level(verbosity: int):
     Args:
         verbosity (int): 1 to set info level verbosity, 2 or more than 2 for debug level.
     """
-    if verbosity == 1:
-        stream.setLevel(logging.INFO)
-        log.setLevel(logging.INFO)
-    elif verbosity >= 2:
-        stream.setLevel(logging.DEBUG)
-        log.setLevel(logging.DEBUG)
+    log_levels = [logging.ERROR, logging.WARNING, logging.INFO, logging.DEBUG]
+    log_level = log_levels[min(len(log_levels) - 1, verbosity)]
+    stream.setLevel(log_level)
+    file_h.setLevel(LOG_LEVEL)
+    log.addHandler(stream)
+    log.addHandler(file_h)
+    log.setLevel(log_level)
 
 
 @click.group(chain=True)
@@ -285,6 +306,27 @@ def remote(v):
     log.info("Running Remote Control test")
     cmd = remote_control_test()
     cmd.execute_command()
+
+
+@cli.command("manual")
+@click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
+@click.option(
+    "-t",
+    type=click.Choice(
+        ["ir", "kb"],
+        case_sensitive=False,
+    ),
+    help="Drives the robot manually with the given controller. ir=infrared remote, kb=keyboard",
+)
+def manual(t, v):
+    """Drive the car in manaual mode. Options[-t kb|ir].
+    'ir' selects infrared remote control and 'kb' selects
+    keyboard control.
+    """
+    set_verbosity_level(v) if v else None
+    cmd_opts = manual_drive_cmd_options(t=t)
+    handle = manual_drive(cmd_opts)
+    handle.start()
 
 
 def print_help_and_exit(command: click.command):

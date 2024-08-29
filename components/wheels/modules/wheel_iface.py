@@ -76,6 +76,10 @@ class WheelIface(metaclass=abc.ABCMeta):
     def get_name(self) -> str:
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def cleanup(self) -> str:
+        raise NotImplementedError
+
 
 wheel_ctrl_options = TypedDict(
     "wheel_ctrl_options",

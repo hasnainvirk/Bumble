@@ -15,4 +15,6 @@ class CameraTiltServoTest:
         elif cmd_opts.get("tilt") == "open":
             self.servo.open_camera()
         else:
-            raise ValueError("Invalid command options")
+            self.log.error("Invalid command options")
+
+        self.servo.cleanup()

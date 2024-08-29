@@ -6,7 +6,7 @@ from components.remote_control.modules.buttons import (
 from components.remote_control.modules.infrared_recvr_base import (
     InfraredRecvrBase as Base,
 )
-import logging, time, threading
+import logging, threading
 
 
 GPIO_15 = 15
@@ -18,10 +18,9 @@ class InfraredReceiver(Base):
     def __init__(self, ctrls: button_ctrls):
         self.log = logging.getLogger("bumble")
         self.pin = GPIO_15
-        self.data = [0, 0, 0, 0]
         self.ctrls = ctrls
         self.lock = threading.Lock()
-        super().__init__(self.pin, self.data)
+        super().__init__(self.pin)
 
     def start(self):
         # Start the infrared receiver in a separate thread
@@ -35,8 +34,8 @@ class InfraredReceiver(Base):
     def shutdown(self):
         # remove the interrupt
         GPIO.remove_event_detect(self.pin)
-        # GPIO.cleanup(self.pin)
         self.thread.join()
+        GPIO.cleanup(self.pin)
 
     def __worker(self):
         # Set up an interrupt to detect the signal
@@ -45,13 +44,13 @@ class InfraredReceiver(Base):
                 self.pin, GPIO.FALLING, callback=self.__handle_interrupt
             )
         except RuntimeError as e:
-            self.log.error(f"Failed to add edge detection: {e}")
-            GPIO.cleanup(self.pin)
+            self.log.critical(f"Failed to add edge detection: {e}")
+            self.cleanup()
 
     def __handle_interrupt(self, channel):
         with self.lock:
             if GPIO.input(channel) == 0:
-                self.recv_preamble()
+                # self.recv_preamble()
                 self.recv_data()
                 if self.verify_data():
                     data = self.data[2]

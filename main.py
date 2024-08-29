@@ -1,10 +1,9 @@
 import sys, logging, signal, argparse
-import queue
 from colorlog import ColoredFormatter
 from helpers.ir_helper import RemoteControlHelper as remote_control
 from components.oled.oled_task import OledDisplay as oled
 from components.led_panel.led_panel_task import LedPanelTask as led_panel
-from helpers.kb_controller import KeyboardDriveControl as kb_controller
+from helpers.kb_controller_server import UDPControllerServer as udp_controller_server
 import RPi.GPIO as GPIO
 
 
@@ -39,26 +38,37 @@ parser.add_argument(
     default=0,
     help="Increase verbosity level (use -v, -vv, -vvv, etc.)",
 )
+parser.add_argument(
+    "-w",
+    "--w",
+    type=str,
+    help="Choos input method (ir = remote or kb = keyboard)",
+)
 args = parser.parse_args()
 
 # Setting up logger
 log = setup_logger(args.verbose)
 
-# setup queue
-event_queue = queue.Queue()
+if args.w not in ["ir", "kb"]:
+    log.error("Invalid input method. Use either 'ir' or 'kb'")
+    sys.exit(1)
 
-ir = remote_control()
+if args.w == "ir":
+    log.info("Starting in IR mode")
+    controller = remote_control()
+elif args.w == "kb":
+    log.info("Starting in KEYBOARD mode")
+    controller = udp_controller_server()
+
 oled = oled()
 led_panel = led_panel()
-kb_controller = kb_controller()
 
 
 def signal_handler(sig, frame):
     log.info("Exit signal received. Exiting...")
-    ir.shutdown()
+    controller.shutdown()
     oled.shutdown()
     led_panel.shutdown()
-    kb_controller.shutdown()
 
     GPIO.cleanup()
 
@@ -70,14 +80,13 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 if __name__ == "__main__":
-    # START REMOTE CONTROL
-    ir.start()
+
     # START OLED
     oled.start()
     # START LED PANEL
     led_panel.start()
-    # START KEYBOARD CONTROLLER
-    kb_controller.start()
+    # START INPUT CONTROLLER
+    controller.start()
 
     # wait for exit signal
     signal.pause()

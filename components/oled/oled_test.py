@@ -26,16 +26,28 @@ class OledTest(object):
             self.__test_stats_load()
 
     def __test_text_areas(self):
-        self.text.write_area("Hello, World!", AREA_1)
-        self.text.write_area("Area 2", AREA_2)
-        self.text.write_area("Area 3", AREA_3)
-        self.text.write_area("Area 4!", AREA_4)
+        try:
+            self.text.write_area("Hello, World!", AREA_1)
+            self.text.write_area("Area 2", AREA_2)
+            self.text.write_area("Area 3", AREA_3)
+            self.text.write_area("Area 4!", AREA_4)
+        except KeyboardInterrupt:
+            self.text.cleanup()
 
     def __test_image_load(self, ctype: str | None):
-        self.image.load_image(ctype)
+        try:
+            self.image.load_image(ctype)
+        except KeyboardInterrupt:
+            self.image.cleanup()
 
     def __test_emoji_load(self, ctype: str):
-        self.emoji.load_emoji(ctype)
+        try:
+            self.emoji.load_emoji(ctype)
+        except KeyboardInterrupt:
+            self.emoji.cleanup()
 
     def __test_stats_load(self):
-        self.stats.load_stats()
+        try:
+            self.stats.load_stats()
+        except KeyboardInterrupt:
+            self.stats.cleanup()

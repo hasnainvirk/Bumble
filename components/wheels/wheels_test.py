@@ -60,4 +60,5 @@ class WheelsTest(object):
                     raise ValueError(f"Invalid direction: {direction}")
             except KeyboardInterrupt:
                 self.wheel.stop()
+                self.wheel.cleanup()
                 break

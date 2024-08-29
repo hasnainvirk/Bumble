@@ -46,6 +46,11 @@ class CliDriveSystem:
             self.wheel = self.__ctrl.get(wheel)
             self.wheel.stop()
 
+    def cleanup(self):
+        for wheel in self.__wheels:
+            self.wheel = self.__ctrl.get(wheel)
+            self.wheel.cleanup()
+
     def turn_left(self):
         self.wheel = self.__ctrl.get(UPPER_LEFT_WHEEL)
         self.wheel.set_speed(self.speed)

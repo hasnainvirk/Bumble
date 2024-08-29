@@ -39,3 +39,4 @@ class LedPanelTask:
 
         self.__panel.display(self.__bob_eyes_dead)
         self.__panel.clear()
+        self.__panel.cleanup()
