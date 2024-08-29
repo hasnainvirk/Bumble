@@ -1,5 +1,5 @@
-from components.remote_control.modules.infrared_recvr import (
-    InfraRedRecvr as infra_red_recvr,
+from components.remote_control.modules.cli_infrared_recvr import (
+    CliInfrared as infra_red_recvr,
 )
 from components.remote_control.modules.buttons import (
     ButtonControls as button_controls,
