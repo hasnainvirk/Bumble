@@ -29,6 +29,7 @@ class CliDriveSystem:
             UPPER_RIGHT_WHEEL,
             LOWER_RIGHT_WHEEL,
         ]
+        self.speed = 30
         self.wheel: WheelIface = None
         for wheel in self.__wheels:
             self.wheel = self.__ctrl.get(wheel)
