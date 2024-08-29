@@ -43,26 +43,12 @@ def main():
                     client.send_command("DOWN")
                 elif c == 3:  # left
                     client.send_command("LEFT")
+                elif c == 4:  # space bar
+                    client.send_command("STOP")
                 print(c)
     except KeyboardInterrupt as e:
         print(e)
         kb.set_normal_term()
-
-    # while True:
-    #     try:
-    #         if keyboard.is_pressed("up"):
-    #             client.send_command("UP")
-    #         elif keyboard.is_pressed("down"):
-    #             client.send_command("DOWN")
-    #         elif keyboard.is_pressed("left"):
-    #             client.send_command("LEFT")
-    #         elif keyboard.is_pressed("right"):
-    #             client.send_command("RIGHT")
-    #         elif keyboard.is_pressed("esc"):
-    #             print("Exiting...")
-    #             break
-    #     except Exception as e:
-    #         print(f"Error: {e}")
 
 
 if __name__ == "__main__":

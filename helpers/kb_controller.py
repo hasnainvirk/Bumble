@@ -49,6 +49,8 @@ class KeyboardDriveControl:
             self.car_controller.post_message(
                 "right", slow_down=False, delay=0.1, step=5
             )
+        elif command == "STOP":
+            self.car_controller.post_message("none", slow_down=True, delay=0.1, step=5)
         else:
             self.log.error(f"Invalid command: {command}")
 
