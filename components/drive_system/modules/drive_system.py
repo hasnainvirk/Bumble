@@ -29,7 +29,7 @@ from components.wheels.modules.wheel_iface import (
 
 
 class DriveSystem:
-    def __init__(self, speed=50, embedded_ultrasonic_sensor=False):
+    def __init__(self, speed=50):
         self.__ctrl: wheel_ctrl_options = {}
         self.__ctrl.update({UPPER_LEFT_WHEEL: UpperLeftWheel()})
         self.__ctrl.update({LOWER_LEFT_WHEEL: LowerLeftWheel()})
@@ -41,165 +41,42 @@ class DriveSystem:
             UPPER_RIGHT_WHEEL,
             LOWER_RIGHT_WHEEL,
         ]
-        self.wheel: WheelIface = None
-        self.sensor = None
-        self.servo = None
-        self.speed = speed
-        self.is_driving = False
+        self.__wheel: WheelIface = None
+        self.__speed = speed
+        self.__is_driving = False
         for wheel in self.__wheels:
-            self.wheel = self.__ctrl.get(wheel)
-            self.wheel.set_speed(self.speed)
-        self.queue = queue.Queue()
-        self.threads = []
+            self.__wheel = self.__ctrl.get(wheel)
+            self.__wheel.set_speed(self.__speed)
+        self.__queue = queue.Queue()
+        self.__threads = []
         self.log = logging.getLogger("bumble")
-        self.stop_flag = threading.Event()
-        self.safety_flag = threading.Event()
-        self.lock = threading.Lock()
-        self.safety_distance_lock = threading.Lock()
-        self.drive_train_work_done_lock = threading.Lock()
-        self.drive_train_worker_work_done_status: dict = {
+        self.__stop_flag = threading.Event()
+        self.__safety_flag = threading.Event()
+        self.__driving_status_lock = threading.Lock()
+        self.__safety_distance_lock = threading.Lock()
+        self.__drive_train_work_done_lock = threading.Lock()
+        self.__drive_train_worker_work_done_status: dict = {
             UPPER_LEFT_WHEEL: False,
             LOWER_LEFT_WHEEL: False,
             UPPER_RIGHT_WHEEL: False,
             LOWER_RIGHT_WHEEL: False,
         }
-        if embedded_ultrasonic_sensor:
-            self.sensor = ultrasonic_sensor()
-            self.servo = ultrasonic_sensor_servo()
 
-    def set_driving_status(self, status: bool):
-        with self.lock:
-            self.is_driving = status
-
-    def get_driving_status(self):
-        with self.lock:
-            return self.is_driving
+        self.__sensor = ultrasonic_sensor()
+        self.__servo = ultrasonic_sensor_servo()
 
     def start(self):
-        self.start_drive_train_workers()
-        self.start_collision_detection_worker()
+        self.__start_drive_train_workers()
+        self.__start_collision_detection_worker()
 
     def shutdown(self):
         # Stop all threads by sending None to the queue
         for _ in self.__wheels:
-            self.queue.put(None)
-        self.stop_flag.set()
+            self.__queue.put(None)
+        self.__stop_flag.set()
 
-        for thread in self.threads:
+        for thread in self.__threads:
             thread.join()
-
-    def start_drive_train_workers(self):
-        for wheel in self.__wheels:
-            thread = threading.Thread(
-                target=self.drive_train_worker,
-                args=(wheel,),
-                name=f"Controller Thread for {wheel} wheel",
-            )
-            thread.daemon = False
-            thread.start()
-            self.threads.append(thread)
-
-    def start_collision_detection_worker(self):
-        thread = threading.Thread(
-            target=self.collisions_detection_worker,
-            name="Collision dection thread",
-        )
-        thread.daemon = False
-        thread.start()
-        self.threads.append(thread)
-
-    def set_drive_train_worker_work_done_status(self, wheel_name, status):
-        with self.drive_train_work_done_lock:
-            self.drive_train_worker_work_done_status[wheel_name] = status
-
-    def get_drive_train_worker_work_done_status(self):
-        with self.drive_train_work_done_lock:
-            if all(self.drive_train_worker_work_done_status.values()):
-                return True
-            self.log.debug("Not all workers are done ...")
-            return False
-
-    def drive_train_worker(self, wheel_name):
-        while True:
-            self.log.debug(f"Worker for {wheel_name} waiting for message")
-            message = self.queue.get()
-            if message is None:
-                self.log.debug(f"Stopping {wheel_name} worker ...")
-                self.__ctrl[wheel_name].stop()
-                self.set_driving_status(False)
-                self.safety_flag.set()
-                break
-            action: wheel_msg_action = message.get(wheel_name)
-            self.log.debug(f"Processing message: {action}")
-            self.__ctrl[wheel_name].process_message(action)
-            if action.get("direction") != DIRECTION_NONE:
-                self.set_driving_status(True)
-            else:
-                self.set_driving_status(False)
-            self.set_drive_train_worker_work_done_status(wheel_name, True)
-            self.log.debug(f"{wheel_name} worker done ...")
-            self.queue.task_done()
-            if self.get_drive_train_worker_work_done_status():
-                self.drive_train_worker_work_done_status = {
-                    UPPER_LEFT_WHEEL: False,
-                    LOWER_LEFT_WHEEL: False,
-                    UPPER_RIGHT_WHEEL: False,
-                    LOWER_RIGHT_WHEEL: False,
-                }
-                # unblock the collision detection worker
-                self.safety_flag.set()
-                self.log.debug("RELEASING COLLECTION DETECTION WORKER")
-
-    def collisions_detection_worker(self):
-        while not self.stop_flag.is_set():
-            if self.sensor is not None:
-                distance = self.sensor.get_distance()
-                # self.log.debug(f"Distance: {distance} cm")
-                if distance < 20:
-                    self.log.warning(f"Collision Warning {distance} cm")
-                    if self.get_driving_status():
-                        self.post_message(DIRECTION_NONE)
-                        self.log.debug("BLOCKING DRIVE TRAIN WORKERS STOP")
-                        # wait until car is stopped
-                        self.safety_flag.wait()  # blocks until the safety flag is set
-                        self.safety_flag.clear()
-                        self.log.debug("COLLISION DETECTION UNBLOCKED")
-                        # Decide which direction to go
-                        decision_matrix = self.__get_safe_direction()
-                        recommendation = max(decision_matrix, key=decision_matrix.get)
-                        self.log.debug(
-                            f"Recommendation: {recommendation}, {decision_matrix[recommendation]}cm"
-                        )
-                        if recommendation == "straight":
-                            self.post_message(DIRECTION_FORWARD)
-                        elif recommendation == "left":
-                            self.post_message(DIRECTION_LEFT)
-                        elif recommendation == "right":
-                            self.post_message(DIRECTION_RIGHT)
-
-                        # wait until car acts on the recommendation
-                        self.safety_flag.wait()
-                        self.safety_flag.clear()
-                        time.sleep(1)
-                        # wait until car stops after turning
-                        if recommendation == "left" or recommendation == "right":
-                            self.post_message(DIRECTION_NONE)
-                            self.safety_flag.wait()
-                            self.safety_flag.clear()
-
-                        self.post_message(DIRECTION_FORWARD)
-                        self.safety_flag.wait()
-                        self.safety_flag.clear()
-
-    def __get_safe_direction(self):
-        with self.safety_distance_lock:
-            self.servo.point_right()
-            dist_right: float = self.sensor.get_distance()
-            self.servo.point_left()
-            dist_left: float = self.sensor.get_distance()
-            self.servo.point_straight()
-            dist_straight: float = self.sensor.get_distance()
-            return {"right": dist_right, "left": dist_left, "straight": dist_straight}
 
     def post_message(
         self,
@@ -238,7 +115,7 @@ class DriveSystem:
             UPPER_LEFT_WHEEL: {
                 "direction": upper_left_wheel_dir,
                 "name": UPPER_LEFT_WHEEL,
-                "speed": 0 if upper_left_wheel_dir == DIRECTION_NONE else self.speed,
+                "speed": 0 if upper_left_wheel_dir == DIRECTION_NONE else self.__speed,
                 "slow_down": slow_down,
                 "delay": delay,
                 "step": step,
@@ -246,7 +123,7 @@ class DriveSystem:
             LOWER_LEFT_WHEEL: {
                 "direction": lower_left_wheel_dir,
                 "name": LOWER_LEFT_WHEEL,
-                "speed": 0 if lower_left_wheel_dir == DIRECTION_NONE else self.speed,
+                "speed": 0 if lower_left_wheel_dir == DIRECTION_NONE else self.__speed,
                 "slow_down": slow_down,
                 "delay": delay,
                 "step": step,
@@ -254,7 +131,7 @@ class DriveSystem:
             UPPER_RIGHT_WHEEL: {
                 "direction": upper_right_wheel_dir,
                 "name": UPPER_RIGHT_WHEEL,
-                "speed": 0 if upper_right_wheel_dir == DIRECTION_NONE else self.speed,
+                "speed": 0 if upper_right_wheel_dir == DIRECTION_NONE else self.__speed,
                 "slow_down": slow_down,
                 "delay": delay,
                 "step": step,
@@ -262,7 +139,7 @@ class DriveSystem:
             LOWER_RIGHT_WHEEL: {
                 "direction": lower_right_wheel_dir,
                 "name": LOWER_RIGHT_WHEEL,
-                "speed": 0 if lower_right_wheel_dir == DIRECTION_NONE else self.speed,
+                "speed": 0 if lower_right_wheel_dir == DIRECTION_NONE else self.__speed,
                 "slow_down": slow_down,
                 "delay": delay,
                 "step": step,
@@ -270,59 +147,130 @@ class DriveSystem:
         }
 
         for _ in self.__wheels:
-            self.queue.put(message)
+            self.__queue.put(message)
         self.log.debug(f"Message posted: {message}")
 
-    def drive_forward(self):
-        self.__drive(DIRECTION_FORWARD)
-
-    def drive_backward(self):
-        self.__drive(DIRECTION_BACKWARD)
-
-    def stop(self):
+    def __start_drive_train_workers(self):
         for wheel in self.__wheels:
-            self.wheel = self.__ctrl.get(wheel)
-            self.wheel.stop()
+            thread = threading.Thread(
+                target=self.__drive_train_worker,
+                args=(wheel,),
+                name=f"Controller Thread for {wheel} wheel",
+            )
+            thread.daemon = False
+            thread.start()
+            self.__threads.append(thread)
 
-    def turn_left(self):
-        self.wheel = self.__ctrl.get(UPPER_LEFT_WHEEL)
-        self.wheel.set_speed(self.speed)
-        self.wheel.move_backwards()
+    def __start_collision_detection_worker(self):
+        thread = threading.Thread(
+            target=self.__collisions_detection_worker,
+            name="Collision dection thread",
+        )
+        thread.daemon = False
+        thread.start()
+        self.__threads.append(thread)
 
-        self.wheel = self.__ctrl.get(LOWER_LEFT_WHEEL)
-        self.wheel.set_speed(self.speed)
-        self.wheel.move_backwards()
+    def __set_drive_train_worker_work_done_status(self, wheel_name, status):
+        with self.__drive_train_work_done_lock:
+            self.__drive_train_worker_work_done_status[wheel_name] = status
 
-        self.wheel = self.__ctrl.get(UPPER_RIGHT_WHEEL)
-        self.wheel.set_speed(self.speed)
-        self.wheel.move_forward()
+    def __get_drive_train_worker_work_done_status(self):
+        with self.__drive_train_work_done_lock:
+            if all(self.__drive_train_worker_work_done_status.values()):
+                return True
+            return False
 
-        self.wheel = self.__ctrl.get(LOWER_RIGHT_WHEEL)
-        self.wheel.set_speed(self.speed)
-        self.wheel.move_forward()
+    def __drive_train_worker(self, wheel_name):
+        while True:
+            self.log.debug(f"Worker for {wheel_name} waiting for message")
+            message = self.__queue.get()
+            if message is None:
+                self.log.debug(f"Stopping {wheel_name} worker ...")
+                self.__ctrl[wheel_name].stop()
+                self.__set_driving_status(False)
+                self.__safety_flag.set()
+                break
+            action: wheel_msg_action = message.get(wheel_name)
+            self.log.debug(f"Processing message: {action}")
+            self.__ctrl[wheel_name].process_message(action)
+            if action.get("direction") != DIRECTION_NONE:
+                self.__set_driving_status(True)
+            else:
+                self.__set_driving_status(False)
+            self.__set_drive_train_worker_work_done_status(wheel_name, True)
+            self.log.debug(f"{wheel_name} worker done ...")
+            self.__queue.task_done()
+            if self.__get_drive_train_worker_work_done_status():
+                self.__drive_train_worker_work_done_status = {
+                    UPPER_LEFT_WHEEL: False,
+                    LOWER_LEFT_WHEEL: False,
+                    UPPER_RIGHT_WHEEL: False,
+                    LOWER_RIGHT_WHEEL: False,
+                }
+                # unblock the collision detection worker
+                self.__safety_flag.set()
+                self.log.debug("RELEASING COLLECTION DETECTION WORKER")
 
-    def turn_right(self):
-        self.wheel = self.__ctrl.get(UPPER_LEFT_WHEEL)
-        self.wheel.set_speed(self.speed)
-        self.wheel.move_forward()
+    def __collisions_detection_worker(self):
+        while not self.__stop_flag.is_set():
+            if self.__sensor is not None:
+                distance = self.__sensor.get_distance()
+                # self.log.debug(f"Distance: {distance} cm")
+                if distance < 20:
+                    self.log.warning(f"Collision Warning {distance} cm")
+                    if self.__get_driving_status():
+                        self.post_message(DIRECTION_NONE)
+                        self.log.debug("BLOCKING DRIVE TRAIN WORKERS STOP")
+                        # wait until car is stopped
+                        self.__safety_flag.wait()  # blocks until the safety flag is set
+                        self.__safety_flag.clear()
+                        self.log.debug("COLLISION DETECTION UNBLOCKED")
+                        # Decide which direction to go
+                        decision_matrix = self.__get_safe_direction()
+                        recommendation = max(decision_matrix, key=decision_matrix.get)
+                        self.log.debug(
+                            f"Recommendation: {recommendation}, {decision_matrix[recommendation]}cm"
+                        )
+                        if recommendation == "straight":
+                            self.post_message(DIRECTION_FORWARD)
+                        elif recommendation == "left":
+                            self.post_message(DIRECTION_LEFT)
+                        elif recommendation == "right":
+                            self.post_message(DIRECTION_RIGHT)
 
-        self.wheel = self.__ctrl.get(LOWER_LEFT_WHEEL)
-        self.wheel.set_speed(self.speed)
-        self.wheel.move_forward()
+                        # wait until car acts on the recommendation
+                        # delay for allowing the turn
+                        self.__block_until_safety_flag_set(delay=1)
 
-        self.wheel = self.__ctrl.get(UPPER_RIGHT_WHEEL)
-        self.wheel.set_speed(self.speed)
-        self.wheel.move_backwards()
+                        # wait until car stops after turning
+                        if recommendation == "left" or recommendation == "right":
+                            self.post_message(DIRECTION_NONE)
+                            self.__block_until_safety_flag_set()
 
-        self.wheel = self.__ctrl.get(LOWER_RIGHT_WHEEL)
-        self.wheel.set_speed(self.speed)
-        self.wheel.move_backwards()
+                        # wait until car starts moving forward
+                        self.post_message(DIRECTION_FORWARD)
+                        self.__block_until_safety_flag_set()
 
-    def __drive(self, direction: str):
-        for wheel in self.__wheels:
-            self.wheel = self.__ctrl.get(wheel)
-            self.wheel.set_speed(self.speed)
-            if direction == DIRECTION_FORWARD:
-                self.wheel.move_forward()
-            elif direction == DIRECTION_BACKWARD:
-                self.wheel.move_backwards()
+    def __set_driving_status(self, status: bool):
+        with self.__driving_status_lock:
+            self.__is_driving = status
+
+    def __get_driving_status(self):
+        with self.__driving_status_lock:
+            return self.__is_driving
+
+    def __block_until_safety_flag_set(self, delay: int = None):
+        self.__safety_flag.wait()
+        self.__safety_flag.clear()
+        if delay:
+            time.sleep(delay)
+
+    def __get_safe_direction(self):
+        with self.__safety_distance_lock:
+            self.__servo.point_right()
+            dist_right: float = self.__sensor.get_distance()
+            self.__servo.point_left()
+            dist_left: float = self.__sensor.get_distance()
+            self.__servo.point_straight()
+            dist_straight: float = self.__sensor.get_distance()
+            return {"right": dist_right, "left": dist_left, "straight": dist_straight}

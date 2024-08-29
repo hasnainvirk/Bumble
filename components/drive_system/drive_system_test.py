@@ -1,4 +1,6 @@
-from components.drive_system.modules.drive_system import DriveSystem
+from components.drive_system.modules.cli_drive_system import (
+    CliDriveSystem as drive_system,
+)
 from typing import TypedDict, Optional
 import time
 
@@ -16,7 +18,7 @@ drive_system_cmd_options = TypedDict(
 
 class DriveSystemTest(object):
     def __init__(self):
-        self.__drive_system = DriveSystem()
+        self.__drive_system = drive_system()
 
     def execute_command(self, cmd_opts: drive_system_cmd_options):
         while True:
