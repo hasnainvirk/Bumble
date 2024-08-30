@@ -31,10 +31,37 @@ class KeyboardKeyController:
         2 : down
         3 : left
         4 : space bar
+        5 : a, rotate camera left
+        6 : d, rotate camera right
+        7 : w, tilt camera up by 10 degrees
+        8 : s, tilt camera down by 10 degrees
+        9 : x, set camera straight
+        10, q, rotate the camer left by 10 degrees
+        11, e, rotate the camera right by 10 degrees
+        12, z, open camera
+        13, c, close camera
         """
         c = sys.stdin.read(1)
         if c == " ":
             return 4  # space bar
+        elif c == "a" or c == "A":
+            return 5
+        elif c == "d" or c == "D":
+            return 6
+        elif c == "w" or c == "W":
+            return 7
+        elif c == "s" or c == "S":
+            return 8
+        elif c == "x" or c == "X":
+            return 9
+        elif c == "q" or c == "Q":
+            return 10
+        elif c == "e" or c == "E":
+            return 11
+        elif c == "z" or c == "Z":
+            return 12
+        elif c == "c" or c == "C":
+            return 13
         elif c == "\x1b":
             c = sys.stdin.read(2)
             if c[0] == "[":

@@ -27,38 +27,16 @@ from components.ultrasonic_sensor.ultrasonic_sensor_test import (
     UltrasonicSensorTest as ultrasonic_sensor_test,
 )
 
-from components.servos.ultrasonic_servo_test import (
-    UltrasonicSensorServoTest as ultrasonic_servo_test,
-    servo_cmd_options,
-)
-
-from components.servos.camera_rotate_servo_test import (
-    CameraRotateServoTest as camera_servo_test,
-)
-from components.servos.camera_tile_servo_test import (
-    CameraTiltServoTest as tilt_camera_servo_test,
-)
-
 from components.remote_control.remote_control_test import (
     RemoteControlTest as remote_control_test,
 )
+
+from components.servos.servo_test import ServoTest as servo_test, servo_cmd_options
 
 from tests.programs.manual_drive import (
     ManualDrive as manual_drive,
     manual_drive_cmd_options,
 )
-
-# ## Setting up logger
-# LOG_LEVEL = logging.ERROR  # default log level
-# LOGFORMAT = " %(log_color)s%(levelname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"
-# logging.root.setLevel(LOG_LEVEL)
-# formatter = ColoredFormatter(LOGFORMAT)
-# stream = logging.StreamHandler()
-# stream.setLevel(LOG_LEVEL)
-# stream.setFormatter(formatter)
-# log = logging.getLogger("bumble")
-# log.setLevel(LOG_LEVEL)
-# log.addHandler(stream)
 
 LOG_LEVEL = logging.ERROR  # default log level
 LOGFORMAT = " %(log_color)s%(levelname)-8s%(reset)s | %(filename)s | %(log_color)s%(message)s%(reset)s"
@@ -229,30 +207,8 @@ def lts(v):
 
 
 @cli.command("ultrasonic")
-@click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
-def ultrasonic(v):
-    """
-    Ultrasonic Sensor test
-    """
-    set_verbosity_level(v) if v else None
-    log.info("Running Ultrasonic Sensor test")
-    cmd = ultrasonic_sensor_test()
-    cmd.execute_command()
-
-
-@cli.command("servo")
 @click.option(
-    "-ultrasonic",
-    is_flag=True,
-    help="Selects Ultrasonic Sensor Servo",
-)
-@click.option(
-    "-camera",
-    is_flag=True,
-    help="Selects Camera Servos",
-)
-@click.option(
-    "-point",
+    "-servo",
     type=click.Choice(
         ["straight", "right", "left"],
         case_sensitive=False,
@@ -260,12 +216,34 @@ def ultrasonic(v):
     help="Makes the Servo point in the given direction",
 )
 @click.option(
-    "-rotate",
+    "-sensor",
+    is_flag=True,
+    help="Runs test for Ultrasonic Sensor",
+)
+@click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
+def ultrasonic(v, servo, sensor):
+    """
+    Ultrasonic Sensor test
+    """
+    set_verbosity_level(v) if v else None
+    log.info("Running Ultrasonic Sensor test")
+    if servo:
+        cmd_opts = servo_cmd_options(servo_command=servo, type="ultrasonic")
+        cmd = servo_test()
+        cmd.execute_command(cmd_opts=cmd_opts)
+    elif sensor:
+        cmd = ultrasonic_sensor_test()
+        cmd.execute_command()
+
+
+@cli.command("camera")
+@click.option(
+    "-servo",
     type=click.Choice(
-        ["center", "right", "left"],
+        ["straight", "right", "left"],
         case_sensitive=False,
     ),
-    help="Makes the Servo rotate in the given direction",
+    help="Makes the Servo point in the given direction",
 )
 @click.option(
     "-tilt",
@@ -273,26 +251,25 @@ def ultrasonic(v):
         ["close", "open"],
         case_sensitive=False,
     ),
-    help="Makes the camera servo open or shut the camera module",
+    help="Makes the camera servo open or shut",
 )
 @click.option("-v", count=True, help="Verbosity level default=error, v=info, vv=debug")
-def servo(ultrasonic, camera, tilt, point, rotate, v):
+def camera(tilt, servo, v):
     """
-    Servo test for ultrasonic sensor and camera.
+    Servo test for camera.
     """
     set_verbosity_level(v) if v else None
-    if ultrasonic and not tilt:
-        log.info("Running Ultrasonic Sensor Servo test")
-        cmd = ultrasonic_servo_test()
-    elif camera:
+    cmd = servo_test()
+    cmd_opts = None
+    if servo:
         log.info("Running Camera Servo test")
-        if tilt:
-            cmd = tilt_camera_servo_test()
-        else:
-            cmd = camera_servo_test()
+        cmd_opts = servo_cmd_options(servo_command=servo, type="camera", tilt=None)
+    elif tilt:
+        log.info("Running Camera Tilt Servo test")
+        cmd_opts = servo_cmd_options(servo_command=None, tilt=tilt, type="camera")
     else:
-        raise ValueError("Invalid servo option selection")
-    cmd_opts = servo_cmd_options(point=point, rotate=rotate, tilt=tilt)
+        log.error("Invalid command selection")
+        return
     cmd.execute_command(cmd_opts=cmd_opts)
 
 
