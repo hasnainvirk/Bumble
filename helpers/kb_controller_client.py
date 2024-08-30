@@ -25,6 +25,24 @@ def main():
                     client.send_command("LEFT")
                 elif c == 4:  # space bar
                     client.send_command("STOP")
+                elif c == 5:  # a
+                    client.send_command("ROTATE_CAMERA_LEFT")
+                elif c == 6:  # d
+                    client.send_command("ROTATE_CAMERA_RIGHT")
+                elif c == 7:  # w
+                    client.send_command("CAMERA_UP")
+                elif c == 8:  # s
+                    client.send_command("ROTATE_CAMERA_STRAIGHT")
+                elif c == 9:  # x
+                    client.send_command("CAMERA_DOWN")
+                elif c == 10:  # q
+                    client.send_command("ROTATE_CAMERA_LEFT_INCREMENTLY")
+                elif c == 11:  # e
+                    client.send_command("ROTATE_CAMERA_RIGHT_INCREMENTLY")
+                elif c == 12:  # z
+                    client.send_command("OPEN_CAMERA")
+                elif c == 13:  # c
+                    client.send_command("CLOSE_CAMERA")
     except KeyboardInterrupt as e:
         print(e)
         kb.set_normal_term()

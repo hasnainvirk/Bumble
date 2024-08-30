@@ -213,7 +213,7 @@ class DriveSystem:
                 }
                 # unblock the collision detection worker
                 self.__safety_flag.set()
-                self.log.debug("RELEASING COLLECTION DETECTION WORKER")
+                self.log.debug("RELEASING COLLISION DETECTION WORKER")
 
     def __collisions_detection_worker(self):
         while not self.__stop_flag.is_set():

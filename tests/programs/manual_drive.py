@@ -5,7 +5,7 @@ from components.led_panel.led_panel_task import LedPanelTask as led_panel
 from helpers.kb_controller_server import (
     KeyboardControllerServer as kb_controller_server,
 )
-from helpers.camera_helper import CameraHelper as camera_helper
+
 from typing import TypedDict, Optional
 import RPi.GPIO as GPIO
 
@@ -34,7 +34,6 @@ class ManualDrive:
 
         self.oled = oled()
         self.led_panel = led_panel()
-        self.camera = camera_helper()
 
         # Register the signal handler
         signal.signal(signal.SIGINT, self.signal_handler)
@@ -45,9 +44,6 @@ class ManualDrive:
             self.controller.shutdown()
         self.oled.shutdown()
         self.led_panel.shutdown()
-        self.camera.shutdown()
-
-        # GPIO.cleanup()
 
         sys.exit(0)
 
@@ -59,8 +55,6 @@ class ManualDrive:
         self.oled.start()
         # START LED PANEL
         self.led_panel.start()
-        # start the camera
-        self.camera.start()
 
         # wait for exit signal
         signal.pause()
