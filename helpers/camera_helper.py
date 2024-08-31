@@ -92,24 +92,25 @@ class CameraHelper:
                 self.tilt_ctrl_servo.open_camera()
             elif cmd_opts.get("tilt") == CLOSE:
                 self.tilt_ctrl_servo.close_camera()
-            elif cmd_opts.get("tilt") == UPWARD or cmd_opts.get("tilt") == DOWNWARD:
-                self.tilt_ctrl_servo.adjust_angle(
-                    cmd_opts.get("rotate_to_angle")["angle"],
-                    cmd_opts.get("rotate_to_angle")["direction"],
-                )
-
-        if cmd_opts.get("point"):
+        elif cmd_opts.get("point"):
             if cmd_opts.get("point") == LEFT:
                 self.rotate_servo.point_left()
             elif cmd_opts.get("point") == RIGHT:
                 self.rotate_servo.point_right()
             elif cmd_opts.get("point") == STRAIGHT:
                 self.rotate_servo.point_straight()
-
-        if cmd_opts.get("rotate_to_angle") and cmd_opts.get("tilt") is None:
+        elif cmd_opts.get("rotate_to_angle"):
             cmd_obj = cmd_opts.get("rotate_to_angle")
-            self.rotate_servo.adjust_angle(
-                cmd_obj.get("angle"), cmd_obj.get("direction")
-            )
+            if cmd_obj.get("direction") == LEFT or cmd_obj.get("direction") == RIGHT:
+                self.rotate_servo.adjust_angle(
+                    cmd_obj.get("angle"), cmd_obj.get("direction")
+                )
+            elif (
+                cmd_obj.get("direction") == UPWARD
+                or cmd_obj.get("direction") == DOWNWARD
+            ):
+                self.tilt_ctrl_servo.adjust_angle(
+                    cmd_obj.get("angle"), cmd_obj.get("direction")
+                )
 
         self.clear_flag.set()

@@ -16,6 +16,8 @@ import RPi.GPIO as GPIO
 # constants
 SCALING_FACTOR = 11
 PULSE_WIDTH_MICROSECONDS = 500.0
+# SCALING_FACTOR = 5.56
+# PULSE_WIDTH_MICROSECONDS = 1000.0
 PWM_CYCLE_MILLSECONDS = 20.0
 MIN_PIN_NUMBER = 0
 MAX_PIN_NUMBER = 27
@@ -55,18 +57,20 @@ class ServoIface:
         Generates a pulse of the given angle that makes the servo rotate to that angle.
         angle: int: The angle to rotate the servo to
         """
-        if angle < 0 or angle > 180:
-            raise ValueError("Invalid angle")
+        with self.lock:
+            if angle < 0 or angle > 180:
+                raise ValueError("Invalid angle")
 
-        scaled_pulse_width = (
-            angle * SCALING_FACTOR
-        ) + PULSE_WIDTH_MICROSECONDS  # The scaled pulse width
-        hold_time_seconds = scaled_pulse_width / 1000000.0
-        GPIO.output(self.gpio_pin, GPIO.HIGH)
-        time.sleep(hold_time_seconds)
-        GPIO.output(self.gpio_pin, GPIO.LOW)
-        cycle_time_seconds = PWM_CYCLE_MILLSECONDS / 1000.0
-        time.sleep(cycle_time_seconds - hold_time_seconds)  # The cycle of 20 ms
+            scaled_pulse_width = (
+                angle * SCALING_FACTOR
+            ) + PULSE_WIDTH_MICROSECONDS  # The scaled pulse width
+            hold_time_seconds = scaled_pulse_width / 1000000.0
+
+            GPIO.output(self.gpio_pin, GPIO.HIGH)
+            time.sleep(hold_time_seconds)
+            GPIO.output(self.gpio_pin, GPIO.LOW)
+            cycle_time_seconds = PWM_CYCLE_MILLSECONDS / 1000.0
+            time.sleep(cycle_time_seconds - hold_time_seconds)  # The cycle of 20 ms
 
     def point_straight(self):
         """
@@ -78,10 +82,11 @@ class ServoIface:
             )
             return
 
+        self.log.debug("%s - Point straight", self.name)
         if self.current_angle is None:
             self.force_point_straight()
+            return
 
-        self.log.debug("%s - Point straight", self.name)
         i = self.current_angle
         while i > POINTING_STRAIGHT_ANGLE:
             self.generate_pulse(i)
@@ -97,13 +102,14 @@ class ServoIface:
         Points the servo to the right
         """
         if self.id == SERVO_ID_TILT:
-            self.log.warning("Camera Servo - Cannot point straight")
+            self.log.warning("Camera Servo - Cannot point right")
             return
 
-        if self.current_angle is None:
-            self.force_point_straight()
-
         self.log.debug("%s - Point Right", self.name)
+        if self.current_angle is None:
+            self.force_point_right()
+            return
+
         i = self.current_angle
         while i > POINTING_RIGHT_ANGLE:
             self.generate_pulse(i)
@@ -119,6 +125,10 @@ class ServoIface:
             return
 
         self.log.debug("%s - Piont Left", self.name)
+        if self.current_angle is None:
+            self.force_point_left()
+            return
+
         i = self.current_angle
         while i < POINTING_LEFT_ANGLE:
             self.generate_pulse(i)
@@ -132,38 +142,98 @@ class ServoIface:
         direction: str: The direction to adjust to [right, left, upward, downward]
         [upward, downward] are only for camera tilt servo.
         """
-        # camera tilt servo can only open or close and the orientation is such that the
-        # "right", i.e., towards angle 0 is "upward"
-        if self.id == SERVO_ID_TILT:
-            direction = "right" if direction == "upward" else "left"
-
-        self.log.debug("%s - Rotating by %d degrees", self.name, angle)
-        i = self.current_angle
-        desired_angle = (
-            self.current_angle + angle if direction == "right" else i - angle
-        )
-
-        # sanity check
-        if desired_angle > 180 or desired_angle < 0:
-            self.log.error("Invalid angle: %s", desired_angle)
+        if self.current_angle is None:
+            self.log.error(
+                "Current angle is unknown, try pointing to a known direction first, e.g, all the way right"
+            )
             return
 
+        # camera tilt servo can only open or close and the orientation is such that the
+        # "right", i.e., towards angle 0 is "downwards" and "left", i.e., towards angle 90
+        if self.id == SERVO_ID_TILT:
+            if direction == "upward":
+                direction = "left"
+                desired_angle = self.current_angle + angle
+            elif direction == "downward":
+                direction = "right"
+                desired_angle = self.current_angle - angle
+            # direction = "left" if direction == "upward" else "right"
+
+            # desired_angle: int = (
+            #     self.current_angle - angle
+            #     if direction == "right"
+            #     else self.current_angle + angle
+            # )
+            if desired_angle > OPEN_CAMERA_ANGLE or desired_angle < CLOSE_CAMERA_ANGLE:
+                self.log.warning(
+                    "Invalid angle for Camera Tilt Servo: %s. Will adjust to allowed value",
+                    desired_angle,
+                )
+
+                if desired_angle > OPEN_CAMERA_ANGLE:
+                    desired_angle = OPEN_CAMERA_ANGLE
+                else:
+                    desired_angle = CLOSE_CAMERA_ANGLE
+                # desired_angle = (
+                #     OPEN_CAMERA_ANGLE
+                #     if desired_angle > OPEN_CAMERA_ANGLE
+                #     else CLOSE_CAMERA_ANGLE
+                # )
+                self.log.warning("Adjusted angle: %s", desired_angle)
+        else:
+            if direction == "right":
+                desired_angle = self.current_angle - angle
+            elif direction == "left":
+                desired_angle = self.current_angle + angle
+
+            # desired_angle = (
+            #     self.current_angle - angle
+            #     if direction == "right"
+            #     else self.current_angle + angle
+            # )
+            # sanity check
+            if (
+                desired_angle > POINTING_LEFT_ANGLE
+                or desired_angle < POINTING_RIGHT_ANGLE
+            ):
+                self.log.warning(
+                    "Invalid angle: %s. Will adjust to allowed value", desired_angle
+                )
+                if desired_angle > POINTING_LEFT_ANGLE:
+                    desired_angle = POINTING_LEFT_ANGLE
+                else:
+                    desired_angle = POINTING_RIGHT_ANGLE
+                # desired_angle = (
+                #     POINTING_LEFT_ANGLE
+                #     if desired_angle > POINTING_LEFT_ANGLE
+                #     else POINTING_RIGHT_ANGLE
+                # )
+                self.log.warning("Adjusted angle: %s", desired_angle)
+
+        self.log.debug(
+            "%s - Rotating by %d degrees, current angle %s, desired_angle %s",
+            self.name,
+            angle,
+            self.current_angle,
+            desired_angle,
+        )
+
+        i = self.current_angle
+        while i > desired_angle:
+            self.generate_pulse(i)
+            i -= 1
         while i < desired_angle:
             self.generate_pulse(i)
             i += 1
 
-        while i > desired_angle:
-            self.generate_pulse(i)
-            i -= 1
-
-        self.set_angle(desired_angle)
+        self.set_angle(i)
 
     def close_camera(self):
         """
         Closes the camera
         """
         if self.id == SERVO_ID_TILT:
-            self.log.debug("Camera Servo - Closing Camera")
+            self.log.debug("%s - Closing Camera", self.name)
             if self.current_angle is None:
                 self.force_close_camera()
 
@@ -178,10 +248,11 @@ class ServoIface:
         Opens the camera
         """
         if self.id == SERVO_ID_TILT:
-            self.log.debug("Camera Servo - Opening Camera")
+            self.log.debug("%s - Opening Camera", self.name)
 
             if self.current_angle is None:
-                self.force_close_camera()
+                self.force_open_camera()
+                return
 
             i = self.current_angle
             while i > OPEN_CAMERA_ANGLE:
@@ -203,6 +274,24 @@ class ServoIface:
             self.generate_pulse(POINTING_STRAIGHT_ANGLE)
         self.set_angle(POINTING_STRAIGHT_ANGLE)
 
+    def force_point_right(self):
+        """
+        Forces the servo to point right. Do not use this method unless necessary.
+        """
+        self.log.debug("%s - Force Point Right", self.name)
+        for _ in range(0, 50):
+            self.generate_pulse(POINTING_RIGHT_ANGLE)
+        self.set_angle(POINTING_RIGHT_ANGLE)
+
+    def force_point_left(self):
+        """
+        Forces the servo to point left. Do not use this method unless necessary.
+        """
+        self.log.debug("%s - Force Point Left", self.name)
+        for _ in range(0, 50):
+            self.generate_pulse(POINTING_LEFT_ANGLE)
+        self.set_angle(POINTING_LEFT_ANGLE)
+
     def force_close_camera(self):
         """
         Forces the camera to close. Do not use this method unless necessary.
@@ -211,6 +300,15 @@ class ServoIface:
         for _ in range(0, 50):
             self.generate_pulse(CLOSE_CAMERA_ANGLE)
         self.set_angle(CLOSE_CAMERA_ANGLE)
+
+    def force_open_camera(self):
+        """
+        Forces the camera to open. Do not use this method unless necessary.
+        """
+        self.log.debug("%s - Force Open Camera", self.name)
+        for _ in range(0, 50):
+            self.generate_pulse(OPEN_CAMERA_ANGLE)
+        self.set_angle(OPEN_CAMERA_ANGLE)
 
     def cleanup(self):
         """
