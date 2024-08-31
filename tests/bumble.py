@@ -1,3 +1,7 @@
+"""
+Bumble command line interface.
+"""
+
 import logging
 import sys
 import click
@@ -72,7 +76,9 @@ def set_verbosity_level(verbosity: int):
 
 @click.group(chain=True)
 def cli():
-    pass
+    """
+    Bumble command line interface
+    """
 
 
 @cli.command("oled")

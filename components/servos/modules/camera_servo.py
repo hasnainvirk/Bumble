@@ -1,3 +1,7 @@
+"""
+Camera Servo module
+"""
+
 from components.servos.modules.servo_iface import (
     ServoIface,
     SERVO_ID_TILT,
@@ -12,6 +16,16 @@ ROTATE_DOWNWARD = "downward"
 
 
 class CameraServo(ServoIface):
+    """
+    Camera Servo class
+
+    Inherits from ServoIface
+
+    Args:
+        tid (int, optional): Servo ID. Defaults to None.
+        [options: SERVO_ID_ROTATION=1, SERVO_ID_TILT=0]
+    """
+
     def __init__(self, tid: int = None):
         if tid == SERVO_ID_TILT:
             super().__init__(gpio_pin=GPIO_6, name="Camera Tilt Servo", tid=tid)

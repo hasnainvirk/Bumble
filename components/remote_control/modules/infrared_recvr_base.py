@@ -1,5 +1,11 @@
+"""
+This module contains the base class for the infrared receiver.
+"""
+
+import time
+import logging
 import RPi.GPIO as GPIO
-import time, logging, threading
+
 
 SIXTY_MICROSECONDS_IN_SECONDS = 0.00006  # apptoximately
 
@@ -8,9 +14,9 @@ NEC Protocol
 9ms 0, 4.5ms 1 followed by 4 bytes data
 [9ms LOW], [4.5ms HIGH], [Address, Address Inverse (27ms)], [Command, Command Inverse (27ms)]
 
-NEC protocol uses pulse distance encoding of the bits. The data is sent in the form of a series of pulses.
-Each pulse is a 562.5µs long 38kHz carrier burst (about 21 cycles). A logical "1" takes 2.25ms to transmit, 
-while a logical "0" is only half of that, being 1.125ms.
+NEC protocol uses pulse distance encoding of the bits. The data is sent in the form of a series 
+of pulses. Each pulse is a 562.5µs long 38kHz carrier burst (about 21 cycles). A logical "1" takes 
+2.25ms to transmit, while a logical "0" is only half of that, being 1.125ms.
 
 Signal will be high for 562.5µs and low for 562.5µs for a logical "0".
 Signal will be high for 562.5µs and low for 1.6875ms for a logical "1".
@@ -18,6 +24,10 @@ Signal will be high for 562.5µs and low for 1.6875ms for a logical "1".
 
 
 class InfraredRecvrBase:
+    """
+    Base class for the infrared receiver
+    """
+
     def __init__(self, pin):
         self.pin = pin
         self.data = [0, 0, 0, 0]
@@ -25,6 +35,9 @@ class InfraredRecvrBase:
         self.__setup()
 
     def recv_data(self):
+        """
+        Receives the data from the infrared receiver
+        """
         count = 0
         while (
             GPIO.input(self.pin) == 0 and count < 160
@@ -47,15 +60,19 @@ class InfraredRecvrBase:
             # 4 bytes: 1. address, 2. address inverse, 3. command, 4. command inverse
             count = 0
             while GPIO.input(self.pin) == 0 and count < 15:
-                # Wait for the LOW level signal of 562.5 microseconds to pass and exit the loop if it exceeds 60x15=900 microseconds
-                # 900 microseconds is still less than 1.125 milliseconds which is the duration of a logical '0', so this is fine.
+                # Wait for the LOW level signal of 562.5 microseconds to pass and exit the loop if
+                # it exceeds 60x15=900 microseconds
+                # 900 microseconds is still less than 1.125 milliseconds which is the duration of a
+                # logical '0', so this is fine.
                 count += 1
                 time.sleep(SIXTY_MICROSECONDS_IN_SECONDS)
 
             # reset the count as we start to decide the bit value
             count = 0
             while GPIO.input(self.pin) == 1 and count < 40:
-                # waits for logical HIGH level to pass and exits the loop if it exceeds 2.4ms (40x60=2400 microseconds). This is slightly more than 2.25ms which is the duration of a logical '1'.
+                # waits for logical HIGH level to pass and exits the loop if it exceeds 2.4ms
+                # (40x60=2400 microseconds). This is slightly more than 2.25ms which is the duration
+                # of a logical '1'.
                 count += 1
                 time.sleep(SIXTY_MICROSECONDS_IN_SECONDS)
 
@@ -69,25 +86,29 @@ class InfraredRecvrBase:
             else:
                 bit_pos += 1  # otherwise, move to next bit
 
-    # def recv_data(self):
-
     def verify_data(self) -> bool:
+        """
+        Verifies the data received from the infrared receiver
+        """
         # Verify the data received
         if self.data[0] + self.data[1] == 0xFF and self.data[2] + self.data[3] == 0xFF:
-            self.log.debug(f"Address Byte: {self.data[0]}")
-            self.log.debug(f"Address Inverse Byte: {self.data[1]}")
-            self.log.debug(f"Command Byte: {self.data[2]}")
-            self.log.debug(f"Command Inverse Byte: {self.data[3]}")
+            self.log.debug("Address Byte: %d", self.data[0])
+            self.log.debug("Address Inverse Byte: %d", self.data[1])
+            self.log.debug("Command Byte: %d", self.data[2])
+            self.log.debug("Command Inverse Byte: %d", self.data[3])
             return True
         else:
             self.log.error("Malformed data received from IR transmitter")
-            self.log.debug(f"Address Byte: {self.data[0]}")
-            self.log.debug(f"Address Inverse Byte: {self.data[1]}")
-            self.log.debug(f"Command Byte: {self.data[2]}")
-            self.log.debug(f"Command Inverse Byte: {self.data[3]}")
+            self.log.debug("Address Byte: %d", self.data[0])
+            self.log.debug("Address Inverse Byte: %d", self.data[1])
+            self.log.debug("Command Byte: %d", self.data[2])
+            self.log.debug("Command Inverse Byte: %d", self.data[3])
             return False
 
     def cleanup(self):
+        """
+        Cleans up the GPIO pins
+        """
         GPIO.cleanup(self.pin)
 
     def __setup(self):
@@ -96,5 +117,5 @@ class InfraredRecvrBase:
             GPIO.setup(self.pin, GPIO.IN, GPIO.PUD_UP)
             time.sleep(0.1)  # Add a small delay to ensure setup is complete
         except Exception as e:
-            self.log.error(f"Error setting up GPIO: {e}")
+            self.log.error("Error setting up GPIO: %s", e)
             self.cleanup()

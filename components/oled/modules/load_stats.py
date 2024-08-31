@@ -1,19 +1,29 @@
-from components.oled.modules.oled import Oled, RESOURCES_FOLDER
-from PIL import ImageFont
+"""
+This module contains the stats (CPU, RAM, DISK) that can be displayed on the OLED display.
+"""
 
 import subprocess
 import time
 import os
 import logging
+from PIL import ImageFont
+from components.oled.modules.oled import Oled, RESOURCES_FOLDER
 
 
 class Stats(Oled):
+    """
+    Class to display the stats (CPU, RAM, DISK) on the OLED display.
+    """
 
     def __init__(self):
         super().__init__()
         self.log = logging.getLogger("bumble")
+        self.font = None
 
     def load_stats(self):
+        """
+        Load the stats (CPU, RAM, DISK) on the OLED display.
+        """
         # First define some constants to allow easy resizing of shapes.
         padding = -2
         top = padding
@@ -38,7 +48,7 @@ class Stats(Oled):
                 ip = subprocess.check_output(cmd, shell=True).decode("utf-8").strip()
             except subprocess.CalledProcessError as e:
                 ip = "N/A"
-                self.log.error(f"Error getting IP: {e}")
+                self.log.error("Error getting IP: %s", e)
 
             try:
                 cmd = (
@@ -48,7 +58,7 @@ class Stats(Oled):
                 cpu = cpu.replace("CPU Load: ", "")
             except subprocess.CalledProcessError as e:
                 cpu = "N/A"
-                self.log.error(f"Error getting CPU load: {e}")
+                self.log.error("Error getting CPU load: %s", e)
 
             try:
                 cmd = "free -m | awk 'NR==2{printf \"Mem: %s/%sMB %.2f%%\", $3,$2,$3*100/$2 }'"
@@ -58,7 +68,7 @@ class Stats(Oled):
                 mem_usage = mem_usage.replace("Mem: ", "")
             except subprocess.CalledProcessError as e:
                 mem_usage = "N/A"
-                self.log.error(f"Error getting memory usage: {e}")
+                self.log.error("Error getting memory usage: %s", e)
 
             try:
                 cmd = 'df -h | awk \'$NF=="/"{printf "Disk: %d/%dGB %s", $3,$2,$5}\''
@@ -66,7 +76,7 @@ class Stats(Oled):
                 disk = disk.replace("Disk: ", "")
             except subprocess.CalledProcessError as e:
                 disk = "N/A"
-                self.log.error(f"Error getting disk usage: {e}")
+                self.log.error("Error getting disk usage: %s", e)
 
             try:
                 self.draw.text((x, top), "IP: ", font=self.font, fill=255)
@@ -101,6 +111,6 @@ class Stats(Oled):
                 self.disp.image(self.image)
                 self.disp.show()
             except Exception as e:
-                self.log.error(f"Error displaying stats: {e}")
+                self.log.error("Error displaying stats: %s", e)
 
             time.sleep(0.5)

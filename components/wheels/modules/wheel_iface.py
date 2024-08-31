@@ -1,3 +1,7 @@
+"""
+This module is responsible for providing a common interface for the wheels of the robot.
+"""
+
 import abc
 from typing import TypedDict, Optional
 
@@ -54,30 +58,51 @@ class WheelIface(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def move_forward(self):
+        """
+        Move the wheel forward
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
     def move_backwards(self):
+        """
+        Move the wheel backwards
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
     def stop(self):
+        """
+        Stop the wheel
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
     def set_speed(self, speed: int):
+        """
+        Set the speed of the wheel
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
     def get_speed(self) -> int:
+        """
+        Get the speed of the wheel
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
     def get_name(self) -> str:
+        """
+        Get the name of the wheel
+        """
         raise NotImplementedError
 
     @abc.abstractmethod
     def cleanup(self) -> str:
+        """
+        Clean up the wheel
+        """
         raise NotImplementedError
 
 

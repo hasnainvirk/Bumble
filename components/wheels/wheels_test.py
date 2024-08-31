@@ -1,3 +1,7 @@
+""""
+Tets the wheels components
+"""
+
 import time
 from typing import TypedDict, Optional
 from components.wheels.modules.upper_left_wheel import UpperLeftWheel
@@ -26,6 +30,10 @@ wheel_cmd_options = TypedDict(
 
 
 class WheelsTest(object):
+    """
+    Test Class for testsing the wheels components
+    """
+
     def __init__(self):
         self.__ctrl: wheel_ctrl_options = {}
         self.__ctrl.update({UPPER_LEFT_WHEEL: UpperLeftWheel()})
@@ -35,6 +43,12 @@ class WheelsTest(object):
         self.wheel: WheelIface = None
 
     def execute_command(self, cmd_opts: wheel_cmd_options):
+        """
+        Execute the command
+
+        Args:
+        cmd_opts: wheel_cmd_options: The command options
+        """
 
         if cmd_opts.get("forward"):
             self.__handle_wheel(cmd_opts.get("forward"), DIRECTION_FORWARD)

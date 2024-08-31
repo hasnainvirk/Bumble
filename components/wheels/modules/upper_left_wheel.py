@@ -1,5 +1,11 @@
+""""
+Upper Left Wheel Module
+"""
+
+import logging
+import time
 import RPi.GPIO as GPIO
-import logging, time
+
 from components.wheels.modules.wheel_iface import (
     WheelIface,
     wheel_msg_action,
@@ -14,6 +20,10 @@ GPIO.setwarnings(False)
 
 
 class UpperLeftWheel(WheelIface):
+    """
+    Upper Left Wheel class
+    """
+
     def __init__(self):
         super().__init__()
         self.__name = UPPER_LEFT_WHEEL
@@ -47,6 +57,13 @@ class UpperLeftWheel(WheelIface):
         self.__set_duty_cycle(0)
 
     def gradually_decrease_speed(self, step=5, delay=0.1):
+        """
+        Gradually decrease the speed of the motor
+
+        Args:
+        step (int): The step to decrease the speed by
+        delay (float): The delay to wait before decreasing the speed
+        """
         while self.__speed > 0:
             self.__speed -= step
             if self.__speed < 0:
@@ -56,6 +73,13 @@ class UpperLeftWheel(WheelIface):
         self.__set_duty_cycle(0)  # Ensure the motor is completely stopped
 
     def process_message(self, action: wheel_msg_action):
+        """
+        Process the message received from the message broker
+
+        Args:
+        action (wheel_msg_action): The action to be processed
+        """
+
         if action["name"] == self.__name:
             self.__speed = action["speed"]
             if action["direction"] == DIRECTION_FORWARD:
@@ -65,10 +89,10 @@ class UpperLeftWheel(WheelIface):
             elif action["direction"] == DIRECTION_NONE:
                 self.stop()
 
-        if action["slow_down"] == True and self.__speed != 0:
+        if action["slow_down"] is True and self.__speed != 0:
             self.gradually_decrease_speed(step=action["step"], delay=action["delay"])
 
-        self.log.debug(f"Wheel {self.__name} processed message: {action}")
+        self.log.debug("Wheel %s processed message: %s", self.__name, action)
 
     def cleanup(self):
         self.__pwm.stop()

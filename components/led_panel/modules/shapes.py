@@ -1,3 +1,7 @@
+"""
+This module contains the shapes that can be displayed on the LED panel.
+"""
+
 bob_eyes_open = (
     0x10,
     0x28,

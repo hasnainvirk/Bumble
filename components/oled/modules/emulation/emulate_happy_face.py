@@ -1,3 +1,7 @@
+"""
+This script demonstrates how to emulate drawing a simple smiley face on the OLED display
+"""
+
 import time
 from PIL import Image, ImageDraw
 
@@ -13,33 +17,36 @@ draw = ImageDraw.Draw(image)
 
 
 # Function to draw a smiley face
-def draw_smiley(draw, x, y, eyes_open=True):
+def draw_smiley(draw_obj, x, y, are_eyes_open=True):
+    """
+    Draw a smiley face at the specified position.
+    """
     # Draw face
-    draw.ellipse((x, y, x + 30, y + 30), outline=0, fill=1)
+    draw_obj.ellipse((x, y, x + 30, y + 30), outline=0, fill=1)
     # Draw eyes
-    if eyes_open:
-        draw.ellipse((x + 8, y + 8, x + 12, y + 12), outline=0, fill=0)
-        draw.ellipse((x + 18, y + 8, x + 22, y + 12), outline=0, fill=0)
+    if are_eyes_open:
+        draw_obj.ellipse((x + 8, y + 8, x + 12, y + 12), outline=0, fill=0)
+        draw_obj.ellipse((x + 18, y + 8, x + 22, y + 12), outline=0, fill=0)
     else:
-        draw.line((x + 8, y + 10, x + 12, y + 10), fill=0)
-        draw.line((x + 18, y + 10, x + 22, y + 10), fill=0)
+        draw_obj.line((x + 8, y + 10, x + 12, y + 10), fill=0)
+        draw_obj.line((x + 18, y + 10, x + 22, y + 10), fill=0)
     # Draw mouth
-    draw.arc((x + 8, y + 15, x + 22, y + 25), start=0, end=180, fill=0)
+    draw_obj.arc((x + 8, y + 15, x + 22, y + 25), start=0, end=180, fill=0)
 
 
 # Set animation parameters
-blink_interval = 0.5  # Time between blinks
-eyes_open = True
+BLINK_INTERVAL = 0.5  # Time between blinks
+EYES_OPEN = True
 
 # Initial drawing
-draw_smiley(draw, WIDTH_PX // 2 - 15, HEIGHT_PX // 2 - 15, eyes_open)
+draw_smiley(draw, WIDTH_PX // 2 - 15, HEIGHT_PX // 2 - 15, EYES_OPEN)
 image.show()
 
 # Animate blinking eyes
 print("Press Ctrl-C to quit.")
 while True:
     # Toggle eyes state
-    eyes_open = not eyes_open
+    EYES_OPEN = not EYES_OPEN
 
     # Clear the eyes area
     draw.rectangle(
@@ -53,7 +60,7 @@ while True:
     )
 
     # Redraw the smiley face with the new eyes state
-    draw_smiley(draw, WIDTH_PX // 2 - 15, HEIGHT_PX // 2 - 15, eyes_open)
+    draw_smiley(draw, WIDTH_PX // 2 - 15, HEIGHT_PX // 2 - 15, EYES_OPEN)
 
     # Save the image to a file
     # image.save("oled_emulation.png")
@@ -62,4 +69,4 @@ while True:
     image.show()
 
     # Pause briefly before the next frame
-    time.sleep(blink_interval)
+    time.sleep(BLINK_INTERVAL)

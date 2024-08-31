@@ -1,7 +1,9 @@
-from components.remote_control.modules.button_action_iface import (
-    ButtonActionIface as button_action_iface,
-)
+"""
+This module contains the configuration for the buttons on the remote control.
+"""
+
 from typing import TypedDict
+
 
 button_key_codes = {
     "up": 0x46,
@@ -25,11 +27,15 @@ button_key_codes = {
 
 
 class ButtonActionConfig(TypedDict):
+    """Configuration for a button action"""
+
     key: int
     action: callable
 
 
 class ButtonControls(TypedDict):
+    """Configuration for the buttons on the remote control"""
+
     up: ButtonActionConfig
     left: ButtonActionConfig
     ok: ButtonActionConfig

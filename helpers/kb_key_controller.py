@@ -1,3 +1,8 @@
+"""
+This module provides a KeyboardKeyController class that you can use 
+to send commands to the robot using the keyboard.
+"""
+
 import sys
 import termios
 import atexit
@@ -5,6 +10,10 @@ from select import select
 
 
 class KeyboardKeyController:
+    """
+    This class provides a KeyboardKeyController object that you can use
+    to send commands to the robot using the keyboard.
+    """
 
     def __init__(self):
         """Creates a KeyboardKeyController object that you can call to send commands to the robot."""
@@ -71,5 +80,5 @@ class KeyboardKeyController:
 
     def block_until_key_pressed(self):
         """Returns True if keyboard character was hit, False otherwise."""
-        dr, dw, de = select([sys.stdin], [], [], 0)
+        dr, _, _ = select([sys.stdin], [], [], 0)
         return dr != []

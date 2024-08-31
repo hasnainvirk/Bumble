@@ -1,11 +1,22 @@
-import RPi.GPIO as GPIO
+"""
+This module is responsible for controlling the Dotmatrix LED panel.
+"""
+
 import time
+import logging
+import RPi.GPIO as GPIO
+
 
 GPIO.setwarnings(False)
 
 
 class LedPanel:
+    """
+    Dotmatrix LED panel class
+    """
+
     def __init__(self):
+        self.log = logging.getLogger("bumble")
         self.__gpio_pins = {
             "SCLK": 8,
             "DIO": 9,
@@ -13,6 +24,11 @@ class LedPanel:
         self.__setup()
 
     def display(self, matrix_value):
+        """
+        Displays the given matrix value on the LED panel
+        Args:
+            matrix_value (list): The matrix value to display
+        """
         try:
             self.__startup_sequence()
             self.__send_data(0xC0)
@@ -23,9 +39,12 @@ class LedPanel:
             self.__send_data(0x8A)
             self.__end_sequence()
         except Exception as e:
-            self.log.error(f"Error: {e}")
+            self.log.error("Error: %s", e)
 
     def clear(self):
+        """
+        Clears the LED panel
+        """
         try:
             GPIO.output(self.__gpio_pins.get("SCLK"), GPIO.LOW)
             self.__noop()
@@ -34,9 +53,12 @@ class LedPanel:
             GPIO.output(self.__gpio_pins.get("DIO"), GPIO.LOW)
             self.__noop()
         except Exception as e:
-            self.log.error(f"Error: {e}")
+            self.log.error("Error: %s", e)
 
     def cleanup(self):
+        """
+        Cleans up the GPIO pins
+        """
         GPIO.cleanup(
             [
                 self.__gpio_pins.get("SCLK"),

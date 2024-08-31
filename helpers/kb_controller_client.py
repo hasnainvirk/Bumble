@@ -1,3 +1,7 @@
+"""
+This script is used to control the car using the keyboard.
+"""
+
 from kb_key_controller import KeyboardKeyController as kb_key_controller
 from udp_controller_client import UDPClient as udp_controller_client
 
@@ -5,6 +9,9 @@ kb = kb_key_controller()
 
 
 def main():
+    """
+    Main function to control the car using the keyboard
+    """
     server_dns = "bumble.local"
     server_port = 5555
     client = udp_controller_client(server_dns, server_port)
@@ -30,11 +37,11 @@ def main():
                 elif c == 6:  # d
                     client.send_command("ROTATE_CAMERA_RIGHT")
                 elif c == 7:  # w
-                    client.send_command("CAMERA_UP")
+                    client.send_command("CAMERA_UP_INCREMENTLY")
                 elif c == 8:  # s
                     client.send_command("ROTATE_CAMERA_STRAIGHT")
                 elif c == 9:  # x
-                    client.send_command("CAMERA_DOWN")
+                    client.send_command("CAMERA_DOWN_INCREMENTLY")
                 elif c == 10:  # q
                     client.send_command("ROTATE_CAMERA_LEFT_INCREMENTLY")
                 elif c == 11:  # e

@@ -1,12 +1,17 @@
-import RPi.GPIO as GPIO
+"""
+Line Tracking Sensor Module
+"""
+
 from typing import TypedDict
+import logging
+import RPi.GPIO as GPIO
+
 from components.wheels.modules.wheel_iface import (
     DIRECTION_FORWARD,
     DIRECTION_LEFT,
     DIRECTION_RIGHT,
     DIRECTION_NONE,
 )
-import logging
 
 line_ctrl = TypedDict(
     "line_ctrl",
@@ -20,15 +25,25 @@ line_ctrl = TypedDict(
 
 
 class LineTrackingSensor:
+    """
+    Line Tracking Sensor class
+    """
+
     def __init__(self):
         self.__gpio_pins = {"GPIO_17": 17, "GPIO_18": 18, "GPIO_19": 19}
         self.__setup()
         self.log = logging.getLogger("bumble")
 
     def read(self) -> line_ctrl:
+        """
+        Reads the line tracking sensor and returns the decision based on the sensor readings
+        """
         return self.__get_decision()
 
     def cleanup(self):
+        """
+        Cleans up the GPIO pins
+        """
         GPIO.cleanup(
             [
                 self.__gpio_pins["GPIO_17"],
@@ -42,7 +57,7 @@ class LineTrackingSensor:
         middle = GPIO.input(self.__gpio_pins["GPIO_18"])
         left = GPIO.input(self.__gpio_pins["GPIO_19"])
 
-        self.log.debug(f"Right: {right}, Middle: {middle}, Left: {left}")
+        self.log.debug("Right: %s, Middle: %s, Left: %s", right, middle, left)
 
         if middle == 1:
             return {"right": 0, "middle": 1, "left": 0, "decision": DIRECTION_FORWARD}

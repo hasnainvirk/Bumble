@@ -1,5 +1,10 @@
-from PIL import Image, ImageDraw, ImageFont
+"""
+This script demonstrates how to emulate drawing text on an OLED display using the Pillow library.
+"""
+
 import os
+from PIL import Image, ImageDraw, ImageFont
+
 
 # Constants
 WIDTH_PX = 128
@@ -24,10 +29,10 @@ font_path = os.path.join(ROOT_PATH, RESOURCES_FOLDER, "VCR_OSD_MONO_1.001.ttf")
 font = ImageFont.truetype(font_path, FONT_SIZE)
 
 # Define the text to draw
-text = "Hello, OLED 12"
+TEXT = "Hello, OLED 12"
 
 # Calculate text size and position using textbbox
-text_bbox = draw.textbbox((0, 0), text, font=font)
+text_bbox = draw.textbbox((0, 0), TEXT, font=font)
 text_width = text_bbox[2] - text_bbox[0]
 text_height = text_bbox[3] - text_bbox[1]
 
@@ -42,7 +47,7 @@ print(f"Text fits vertically: {fits_vertically}")
 if fits_horizontally and fits_vertically:
     text_x = (WIDTH_PX - text_width) // 2  # Center horizontally
     text_y = (HEIGHT_PX - text_height) // 2  # Center vertically
-    draw.text((text_x, text_y), text, font=font, fill=0)  # 0 for black text
+    draw.text((text_x, text_y), TEXT, font=font, fill=0)  # 0 for black text
 
 # Display the image
 image.show()

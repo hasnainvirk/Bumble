@@ -1,3 +1,11 @@
+"""
+Drive System Module
+"""
+
+import queue
+import threading
+import logging
+import time
 from components.wheels.modules.lower_left_wheel import LowerLeftWheel
 from components.wheels.modules.lower_right_wheel import LowerRightWheel
 from components.wheels.modules.upper_left_wheel import UpperLeftWheel
@@ -9,7 +17,6 @@ from components.servos.modules.ultrasonic_sensor_servo import (
     UltrasonicSensorServo as ultrasonic_sensor_servo,
 )
 
-import queue, threading, logging, time
 
 from components.wheels.modules.wheel_iface import (
     wheel_ctrl_options,
@@ -29,6 +36,10 @@ from components.wheels.modules.wheel_iface import (
 
 
 class DriveSystem:
+    """
+    Drive System class
+    """
+
     def __init__(self, speed=50):
         self.__ctrl: wheel_ctrl_options = {}
         self.__ctrl.update({UPPER_LEFT_WHEEL: UpperLeftWheel()})
@@ -66,10 +77,19 @@ class DriveSystem:
         self.__servo = ultrasonic_sensor_servo()
 
     def start(self):
+        """
+        Starts the drive system
+
+        Starts the drive train workers and collision detection worker.
+        shutdown() should be called to stop the drive system cleanly.
+        """
         self.__start_drive_train_workers()
         self.__start_collision_detection_worker()
 
     def shutdown(self):
+        """
+        Stops the drive system
+        """
         # Stop all threads by sending None to the queue
         for _ in self.__wheels:
             self.__queue.put(None)
@@ -89,6 +109,9 @@ class DriveSystem:
         delay: float = None,
         step: int = None,
     ):
+        """
+        Posts a message to the drive train workers
+        """
         if direction == DIRECTION_FORWARD:
             upper_left_wheel_dir = DIRECTION_FORWARD
             lower_left_wheel_dir = DIRECTION_FORWARD
@@ -152,7 +175,7 @@ class DriveSystem:
 
         for _ in self.__wheels:
             self.__queue.put(message)
-        self.log.debug(f"Message posted: {message}")
+        self.log.debug("Message posted: %s", message)
 
     def __start_drive_train_workers(self):
         for wheel in self.__wheels:
@@ -186,23 +209,23 @@ class DriveSystem:
 
     def __drive_train_worker(self, wheel_name):
         while True:
-            self.log.debug(f"Worker for {wheel_name} waiting for message")
+            self.log.debug("Worker for %s waiting for message", wheel_name)
             message = self.__queue.get()
             if message is None:
-                self.log.debug(f"Stopping {wheel_name} worker ...")
+                self.log.debug("Stopping %s worker ...", wheel_name)
                 self.__ctrl[wheel_name].stop()
                 self.__set_driving_status(False)
                 self.__safety_flag.set()
                 break
             action: wheel_msg_action = message.get(wheel_name)
-            self.log.debug(f"Processing message: {action}")
+            self.log.debug("Processing message: %s", action)
             self.__ctrl[wheel_name].process_message(action)
             if action.get("direction") != DIRECTION_NONE:
                 self.__set_driving_status(True)
             else:
                 self.__set_driving_status(False)
             self.__set_drive_train_worker_work_done_status(wheel_name, True)
-            self.log.debug(f"{wheel_name} worker done ...")
+            self.log.debug("%s worker done ...", wheel_name)
             self.__queue.task_done()
             if self.__get_drive_train_worker_work_done_status():
                 self.__drive_train_worker_work_done_status = {
@@ -221,7 +244,7 @@ class DriveSystem:
                 distance = self.__sensor.get_distance()
                 # self.log.debug(f"Distance: {distance} cm")
                 if distance < 20:
-                    self.log.warning(f"Collision Warning {distance} cm")
+                    self.log.warning("Collision Warning %s cm", distance)
                     if self.__get_driving_status():
                         self.post_message(DIRECTION_NONE)
                         self.log.debug("BLOCKING DRIVE TRAIN WORKERS STOP")
@@ -233,7 +256,9 @@ class DriveSystem:
                         decision_matrix = self.__get_safe_direction()
                         recommendation = max(decision_matrix, key=decision_matrix.get)
                         self.log.debug(
-                            f"Recommendation: {recommendation}, {decision_matrix[recommendation]}cm"
+                            "Recommendation: %s, %.2fcm",
+                            recommendation,
+                            decision_matrix[recommendation],
                         )
                         if recommendation == "straight":
                             self.post_message(DIRECTION_FORWARD)
