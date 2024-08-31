@@ -101,7 +101,7 @@ class KeyboardControllerServer:
         elif command == "CAMERA_UP_INCREMENTLY":
             self.camera.post_message(
                 {
-                    "tilt": "upward",
+                    "tilt": None,
                     "point": None,
                     "rotate_to_angle": {"angle": 10, "direction": "upward"},
                 }
@@ -109,7 +109,7 @@ class KeyboardControllerServer:
         elif command == "CAMERA_DOWN_INCREMENTLY":
             self.camera.post_message(
                 {
-                    "tilt": "downward",
+                    "tilt": None,
                     "point": None,
                     "rotate_to_angle": {"angle": 10, "direction": "downward"},
                 }
