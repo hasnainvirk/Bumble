@@ -1,8 +1,17 @@
+"""
+Ultrasonic Sensor Module
+"""
+
+import time
+import logging
 import RPi.GPIO as GPIO
-import time, logging
 
 
 class UltrasonicSensor:
+    """ "
+    Ultrasonic Sensor class
+    """
+
     def __init__(self):
         self.log = logging.getLogger("bumble")
         self.__gpio_pins = {
@@ -13,6 +22,9 @@ class UltrasonicSensor:
         self.__setup()
 
     def get_distance(self):
+        """
+        Get the distance measured by the ultrasonic sensor
+        """
         # 10us is the trigger signal
         GPIO.output(self.__gpio_pins.get("trigger"), GPIO.HIGH)
         time.sleep(0.00001)  # 10us
@@ -28,6 +40,9 @@ class UltrasonicSensor:
         return measured_distance
 
     def cleanup(self):
+        """
+        Clean up the GPIO pins
+        """
         try:
             GPIO.cleanup(
                 [
@@ -36,7 +51,7 @@ class UltrasonicSensor:
                 ]
             )
         except Exception as e:
-            self.log.error(f"Error cleaning up GPIO: {e}")
+            self.log.error("Error cleaning up GPIO: %s", e)
 
     def __setup(self):
         try:
@@ -44,5 +59,5 @@ class UltrasonicSensor:
             GPIO.setup(self.__gpio_pins.get("trigger"), GPIO.OUT)
             GPIO.setup(self.__gpio_pins.get("echo"), GPIO.IN)
         except Exception as e:
-            self.log.error(f"Error setting up GPIO: {e}")
+            self.log.error("Error setting up GPIO: %s", e)
             self.cleanup()

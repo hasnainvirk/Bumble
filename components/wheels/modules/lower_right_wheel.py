@@ -1,5 +1,11 @@
+"""
+Lower right wheel module
+"""
+
+import logging
+import time
 import RPi.GPIO as GPIO
-import logging, time
+
 from components.wheels.modules.wheel_iface import (
     WheelIface,
     wheel_msg_action,
@@ -14,6 +20,10 @@ GPIO.setwarnings(False)
 
 
 class LowerRightWheel(WheelIface):
+    """
+    Lower Right Wheel class
+    """
+
     def __init__(self):
         super().__init__()
         self.__name = LOWER_RIGHT_WHEEL
@@ -47,6 +57,13 @@ class LowerRightWheel(WheelIface):
         self.__set_duty_cycle(0)
 
     def gradually_decrease_speed(self, step=5, delay=0.1):
+        """
+        Gradually decrease the speed of the motor
+
+        Args:
+            step (int): The step to decrease the speed by
+            delay (float): The delay between each step
+        """
         while self.__speed > 0:
             self.__speed -= step
             if self.__speed < 0:
@@ -56,6 +73,18 @@ class LowerRightWheel(WheelIface):
         self.__set_duty_cycle(0)  # Ensure the motor is completely stopped
 
     def process_message(self, action: wheel_msg_action):
+        """
+        Process the message received by the wheel
+
+        Args:
+            action (wheel_msg_action): The action to be performed by the wheel
+            direction (str): The direction in which the wheel should move
+            speed (int): The speed at which the wheel should move
+            name (str): The name of the wheel
+            slow_down (bool): Flag to indicate if the wheel should gradually decrease speed
+            delay (float): The delay between each decrease in speed
+            step (int): The amount by which to decrease the speed
+        """
         if action["name"] == self.__name:
             self.__speed = action["speed"]
             if action["direction"] == DIRECTION_FORWARD:
@@ -65,10 +94,10 @@ class LowerRightWheel(WheelIface):
             elif action["direction"] == DIRECTION_NONE:
                 self.stop()
 
-        if action["slow_down"] == True and self.__speed != 0:
+        if action["slow_down"] is True and self.__speed != 0:
             self.gradually_decrease_speed(step=action["step"], delay=action["delay"])
 
-        self.log.debug(f"Wheel {self.__name} processed message: {action}")
+        self.log.debug("Wheel %s processed message: %s", self.__name, action)
 
     def cleanup(self):
         self.__set_duty_cycle(0)

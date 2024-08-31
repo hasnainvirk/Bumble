@@ -1,3 +1,7 @@
+"""
+OledTest class is used to test the OLED display components.
+"""
+
 from components.oled.modules import load_emoji, load_image, load_text, load_stats
 from components.oled.modules.oled import (
     AREA_1,
@@ -9,6 +13,10 @@ from components.oled.modules.oled import (
 
 
 class OledTest(object):
+    """
+    Oled Test class
+    """
+
     def __init__(self) -> None:
         self.text = load_text.Text()
         self.image = load_image.Image()
@@ -16,6 +24,17 @@ class OledTest(object):
         self.stats = load_stats.Stats()
 
     def execute_command(self, cmd_opts: test_cmd_options):
+        """
+        Executes the command based on the given options
+
+        Args: cmd_opts (test_cmd_options): A dictionary containing the command options.
+            - text (Optional[bool]): Test the text areas on the OLED display.
+            - image (Optional[str]): Test the image loading on the OLED display.
+            - emoji (Optional[str]): Test the emoji loading on the OLED display.
+            - stats (Optional[bool]): Test the stats loading on the OLED display.
+
+            raise KeyboardInterrupt: If the user interrupts the program.
+        """
         if cmd_opts.get("text"):
             self.__test_text_areas()
         if cmd_opts.get("image"):

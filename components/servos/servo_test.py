@@ -1,10 +1,14 @@
+"""
+This module contains tests for the servo components.
+"""
+
+import logging
+from typing import TypedDict, Optional
 from components.servos.modules.ultrasonic_sensor_servo import (
     UltrasonicSensorServo as ultrasonic_sensor_servo,
 )
 from components.servos.modules.camera_servo import CameraServo as camera_servo
 from components.servos.modules.servo_iface import SERVO_ID_TILT, SERVO_ID_ROTATION
-import logging
-from typing import TypedDict, Optional
 
 
 servo_cmd_options = TypedDict(
@@ -18,11 +22,24 @@ servo_cmd_options = TypedDict(
 
 
 class ServoTest:
+    """
+    Servo Test class
+    """
+
     def __init__(self):
         self.servo = None
         self.log = logging.getLogger("bumble")
 
     def execute_command(self, cmd_opts: servo_cmd_options):
+        """
+        Executes the command based on the given options
+
+        Args:
+            cmd_opts (servo_cmd_options): A dictionary containing the command options.
+                - type (str): The type of servo to control (e.g., "ultrasonic", "camera").
+                - servo_command (Optional[str]): The specific command to execute on the servo.
+                - tilt (Optional[str]): The tilt option for the camera servo.
+        """
         if cmd_opts["type"] == "ultrasonic":
             self.servo = ultrasonic_sensor_servo()
         elif cmd_opts["type"] == "camera":

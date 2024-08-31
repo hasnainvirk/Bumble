@@ -1,8 +1,12 @@
+"""
+Clas to test the drive system module
+"""
+
+from typing import TypedDict, Optional
+import time
 from components.drive_system.modules.cli_drive_system import (
     CliDriveSystem as drive_system,
 )
-from typing import TypedDict, Optional
-import time
 
 
 drive_system_cmd_options = TypedDict(
@@ -16,11 +20,25 @@ drive_system_cmd_options = TypedDict(
 )
 
 
-class DriveSystemTest(object):
+class DriveSystemTest:
+    """
+    Class to test the drive system module
+    """
+
     def __init__(self):
         self.__drive_system = drive_system()
 
     def execute_command(self, cmd_opts: drive_system_cmd_options):
+        """
+        Executes the command based on the given options
+
+        Args:
+            cmd_opts (drive_system_cmd_options): A dictionary containing the command options.
+                - forward (Optional[bool]): Drive the robot forward.
+                - backward (Optional[bool]): Drive the robot backward.
+                - left (Optional[bool]): Turn the robot left.
+                - right (Optional[bool]): Turn the robot right.
+        """
         while True:
             time.sleep(0.01)
             try:

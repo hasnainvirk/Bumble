@@ -1,3 +1,7 @@
+"""
+This module is used to load an emoji on the OLED display.
+"""
+
 import time
 from PIL import Image, ImageDraw
 from components.oled.modules.oled import (
@@ -11,12 +15,18 @@ from components.oled.modules.oled import (
 
 
 class Emoji(Oled):
-    def __init__(self):
-        super().__init__()
+    """
+    Class to load an emoji on the OLED display.
+    """
 
     def load_emoji(self, emoji: str):
+        """
+        Load the specified emoji on the OLED display.
+
+        Args: emoji (str): The emoji to load on the OLED display. [happy, sad, angry]
+        """
         if emoji not in self.emojis:
-            self.log.error(f"Invalid emoji number: {emoji}")
+            self.log.error("Invalid emoji number: %s", emoji)
             return
 
         self.__render(emoji)

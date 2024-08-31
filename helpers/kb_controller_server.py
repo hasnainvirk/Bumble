@@ -1,3 +1,8 @@
+"""
+This module is responsible for creating a UDP server that 
+listens for commands from the keyboard controller.
+"""
+
 import socket
 import threading
 import logging
@@ -6,6 +11,9 @@ from helpers.camera_helper import CameraHelper as camera_helper
 
 
 class KeyboardControllerServer:
+    """
+    Class to create a UDP server that listens for commands from the keyboard controller
+    """
 
     def __init__(self, host="0.0.0.0", port=5555) -> None:
         self.host = host
@@ -17,8 +25,13 @@ class KeyboardControllerServer:
         self.car_controller = drive_system(speed=30)
         self.camera = camera_helper()
         self.stop_flag = threading.Event()
+        self.thread = None
 
     def start(self):
+        """
+        Start the UDP server
+        shutdown must be called to stop the server
+        """
         self.car_controller.start()
         self.camera.start()
         self.thread = threading.Thread(
@@ -27,16 +40,22 @@ class KeyboardControllerServer:
         self.thread.start()
 
     def shutdown(self):
+        """
+        Shutdown the UDP server
+        """
         self.stop_flag.set()
         try:
             self.sock.close()
         except Exception as e:
-            self.log.error(f"Error closing socket: {e}")
+            self.log.error("Error closing socket: %s", e)
         self.car_controller.shutdown()
         self.camera.shutdown()
         self.thread.join()
 
     def execute_command(self, command):
+        """
+        Execute the command received from the keyboard controller
+        """
         if command == "UP":
             self.car_controller.post_message(
                 "forward", slow_down=False, delay=0.1, step=0.1
@@ -79,18 +98,18 @@ class KeyboardControllerServer:
                     "rotate_to_angle": None,
                 }
             )
-        elif command == "CAMERA_UP":
+        elif command == "CAMERA_UP_INCREMENTLY":
             self.camera.post_message(
                 {
-                    "tilt": "open",
+                    "tilt": "upward",
                     "point": None,
                     "rotate_to_angle": {"angle": 10, "direction": "upward"},
                 }
             )
-        elif command == "CAMERA_DOWN":
+        elif command == "CAMERA_DOWN_INCREMENTLY":
             self.camera.post_message(
                 {
-                    "tilt": "close",
+                    "tilt": "downward",
                     "point": None,
                     "rotate_to_angle": {"angle": 10, "direction": "downward"},
                 }
@@ -102,7 +121,7 @@ class KeyboardControllerServer:
                     "point": None,
                     "rotate_to_angle": {"angle": 10, "direction": "left"},
                 }
-            ),
+            )
         elif command == "ROTATE_CAMERA_RIGHT_INCREMENTLY":
             self.camera.post_message(
                 {
@@ -128,23 +147,25 @@ class KeyboardControllerServer:
                 }
             )
         else:
-            self.log.error(f"Invalid command: {command}")
+            self.log.error("Invalid command: %s", command)
 
     def __worker(self):
         self.log.info(
-            f"Keyboard Controller Server Listening on {self.host}:{self.port}"
+            "Keyboard Controller Server Listening on %s : %d",
+            self.host,
+            self.port,
         )
         while not self.stop_flag.is_set():
             try:
                 data, addr = self.sock.recvfrom(1024)
                 command = data.decode("utf-8")
-                self.log.debug(f"Received command: {command} from {addr}")
+                self.log.debug("Received command: %s from %s", command, addr)
                 self.execute_command(command)
             except socket.timeout:
                 continue
             except socket.error as e:
                 if self.stop_flag.is_set():
                     break
-                self.log.error(f"Socket error: {e}")
+                self.log.error("Socket error: %s", e)
             except Exception as e:
-                self.log.error(f"Error: {e}")
+                self.log.error("Error: %s", e)
